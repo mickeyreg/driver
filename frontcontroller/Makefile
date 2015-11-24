@@ -155,7 +155,10 @@ ifdef ADB5800
 obj-y += front_bska/
 obj-y += front_bsla/
 endif
+<<<<<<< HEAD
 
 ifdef ADB2850
 obj-y += front_led/
 endif
+=======
+>>>>>>> 2c3e4aa... Added front controller for ADB5800.
