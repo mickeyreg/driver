@@ -168,7 +168,7 @@ OS_Status_t   OS_UnLockMutex(OS_Mutex_t  *Mutex)
 	return OS_NO_ERROR;
 }
 
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 int   OS_LockMutex_trylock(OS_Mutex_t  *Mutex)
 {
 	return OSDEV_ClaimSemaphore_trylock((OSDEV_Semaphore_t*)Mutex);
