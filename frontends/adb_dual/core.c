@@ -732,7 +732,7 @@ void fe_core_register_frontend(struct dvb_adapter *dvb_adap)
 	int i = 0;
 	int vLoop = 0;
 
-	printk ("%s: Adb_Bbox frontend core\n", __FUNCTION__);
+	printk ("%s: ADB5800 frontend core\n", __FUNCTION__);
 	
 	core[i] = (struct core*) kmalloc(sizeof(struct core),GFP_KERNEL);
 	if (!core[i])
@@ -764,7 +764,7 @@ EXPORT_SYMBOL(fe_core_register_frontend);
 
 int __init fe_core_init(void)
 {
-printk("%s Frontend core loaded\n",__FUNCTION__);
+printk("%s frontend core loaded\n",__FUNCTION__);
 	
     return 0;
 }
@@ -777,6 +777,6 @@ static void __exit fe_core_exit(void)
 module_init             (fe_core_init);
 module_exit             (fe_core_exit);
 
-MODULE_DESCRIPTION      ("STB0899_Frontend_core");
-MODULE_AUTHOR           ("B4Team & freebox");
+MODULE_DESCRIPTION      ("STB0899 Dual Frontend Core");
+MODULE_AUTHOR           ("Team Ducktales mod B4Team & freebox");
 MODULE_LICENSE          ("GPL");

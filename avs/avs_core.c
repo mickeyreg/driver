@@ -80,7 +80,7 @@ static const struct i2c_device_id avs_id[] = {
         { "stv6419", STV6419 },
         { "cxa2161", CXA2161 },
         { "vip2_avs", VIP2_AVS },
-		{ "vip1_avs", VIP1_AVS },
+        { "vip1_avs", VIP1_AVS },
         { "fake_avs", FAKE_AVS },
         { "avs_pio", AVS_PIO },
         { "avs_none", AVS_NONE },
@@ -101,7 +101,7 @@ static unsigned short normal_i2c[] = {
 #elif defined(UFS922) || defined(CUBEREVO) || defined(VITAMIN_HD5000) \
    || defined(CUBEREVO_MINI) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_2000HD)
 	0x4a, /* stv6412" */
-#elif defined(UFC960) || defined(FORTIS_HDBOX) || defined(TF7700) || defined(HL101) || defined(UFS912) || defined(UFS913) || defined(ATEVIO7500) || defined(IPBOX9900) || defined(IPBOX99) || defined(ADB_BOX) || defined(CUBEREVO_3000HD)
+#elif defined(UFC960) || defined(FORTIS_HDBOX) || defined(TF7700) || defined(HL101) || defined(UFS912) || defined(UFS913) || defined(ATEVIO7500) || defined(IPBOX9900) || defined(IPBOX99) || defined(ADB_BOX) || defined(CUBEREVO_3000HD) || defined(ADB5800)
 	0x4b, /* stv6412 / stv6417 / stv6418 */
 #elif defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO_250HD) || defined(IPBOX55) || defined(HS7110) || defined(HS7119) || defined(HS7810A) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(ARIVALINK200)
 	/* CUBEREVO_MINI_FTA does not register */
