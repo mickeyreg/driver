@@ -266,7 +266,6 @@ int procfile_read(char *buffer, char **buffer_location, off_t offset, int buffer
 		if (boxtype==ADB2849) ret = sprintf(buffer, "ADB2849\n");
 		else
 		ret = sprintf(buffer, "UNKOWN\n");
-#endif
 	}
 	return ret;
 }
