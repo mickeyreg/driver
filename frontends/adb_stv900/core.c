@@ -231,7 +231,7 @@ void fe_core_register_frontend(struct dvb_adapter *dvb_adap)
 	int i = 0;
 	int vLoop = 0;
 
-	printk (KERN_INFO "%s: Adb_Box frontend core\n", __FUNCTION__);
+	printk (KERN_INFO "%s: ADB5800 frontend core\n", __FUNCTION__);
 
 	core[i] = (struct core*) kmalloc(sizeof(struct core),GFP_KERNEL);
 	if (!core[i])
@@ -276,6 +276,6 @@ static void __exit fe_core_exit(void)
 module_init             (fe_core_init);
 module_exit             (fe_core_exit);
 
-MODULE_DESCRIPTION      ("Tunerdriver");
+MODULE_DESCRIPTION      ("STV0900 Dual Frontend Core");
 MODULE_AUTHOR           ("Team Ducktales mod B4Team & freebox");
 MODULE_LICENSE          ("GPL");
