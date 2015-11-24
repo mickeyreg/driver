@@ -36,7 +36,7 @@
 #include <linux/proc_fs.h>
 #include <linux/platform_device.h>
 
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 #include <linux/i2c.h>
 #include <linux/delay.h>
 #endif
@@ -50,7 +50,7 @@
 int boxtype = 0;
 struct proc_dir_entry *BT_Proc_File;
 
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 #define I2C_ADDR_STB0899_1	(0xd0 >> 1)	//d0=0x68 d2=69
 #define I2C_ADDR_STB0899_2	(0xd2 >> 1)	//d0=0x68 d2=69
 #define I2C_ADDR_STV090x	(0xd0 >> 1)	//d0=0x68 d2=69
@@ -218,9 +218,10 @@ int procfile_read(char *buffer, char **buffer_location, off_t offset, int buffer
 	}
 	else
 	{
-#if !defined(ADB_BOX)
+#if !defined(ADB_BOX) && !defined(ADB5800)
 		ret = sprintf(buffer, "%d\n", boxtype);
-#else
+#endif
+#if defined(ADB_BOX)
 		if (boxtype==1) ret = sprintf(buffer, "bska\n");
 		else
 		if (boxtype==2) ret = sprintf(buffer, "bsla\n");
@@ -230,6 +231,16 @@ int procfile_read(char *buffer, char **buffer_location, off_t offset, int buffer
 		if (boxtype==4) ret = sprintf(buffer, "bzzb\n");
 		else
 		ret = sprintf(buffer, "UNKOWN\n");
+#elif defined(ADB5800)
+		if (boxtype==1) ret = sprintf(buffer, "BSKA\n");
+		else
+		if (boxtype==2) ret = sprintf(buffer, "BSLA\n");
+		else
+		if (boxtype==3) ret = sprintf(buffer, "BXZB\n");
+		else
+		if (boxtype==4) ret = sprintf(buffer, "BZZB\n");
+		else
+		ret = sprintf(buffer, "UNKOWN\n");
 #endif
 	}
 	return ret;
@@ -237,7 +248,7 @@ int procfile_read(char *buffer, char **buffer_location, off_t offset, int buffer
 
 int __init boxtype_init(void)
 {
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 	int ret;
 #endif
 	dprintk("[BOXTYPE] initializing ...\n");
@@ -252,10 +263,11 @@ int __init boxtype_init(void)
 
 	if (boxtype == 0)
 	{
-#if !defined(ADB_BOX)
-		/* no platform data found, assume ufs910 */
-		boxtype = (STPIO_GET_PIN(PIO_PORT(4),5) << 1) | STPIO_GET_PIN(PIO_PORT(4), 4);
-#else
+#if !defined(ADB_BOX) && !defined(ADB5800)
+	/* no platform data found, assume ufs910 */
+	boxtype = (STPIO_GET_PIN(PIO_PORT(4),5) << 1) | STPIO_GET_PIN(PIO_PORT(4), 4);
+#endif
+#if defined(ADB_BOX) || defined(ADB5800)
 		ret=stv6412_boxtype();
 		dprintk("ret1 = %d\n", ret);//ret 1=ok
 		if (ret!=1) boxtype=3;	//BXZB
@@ -278,7 +290,8 @@ int __init boxtype_init(void)
 				boxtype=4;	//BZZB
 			    }
 		}
-
+#endif
+#if defined(ADB_BOX)
 		if (boxtype==1) dprintk("bska\n");
 		else
 		if (boxtype==2) dprintk("bsla\n");
@@ -286,6 +299,16 @@ int __init boxtype_init(void)
 		if (boxtype==3) dprintk("bxzb\n");
 		else
 		if (boxtype==4) dprintk("bzzb\n");
+		else
+		dprintk("UNKOWN\n");
+#elif defined(ADB5800)
+		if (boxtype==1) dprintk("BSKA\n");
+		else
+		if (boxtype==2) dprintk("BSLA\n");
+		else
+		if (boxtype==3) dprintk("BXZB\n");
+		else
+		if (boxtype==4) dprintk("BZZB\n");
 		else
 		dprintk("UNKOWN\n");
 #endif

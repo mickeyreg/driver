@@ -115,7 +115,7 @@ static struct stmcore_display_pipeline_data platform_data[] = {
 //    .hdmi_i2c_adapter_id      = 1,
 //#elif defined(CONFIG_SH_STB7100_MBOARD) || defined(CONFIG_SH_ST_MB411)
 //#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,23)
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
     .hdmi_i2c_adapter_id = 1,
 #else
     .hdmi_i2c_adapter_id = 2,
@@ -195,7 +195,7 @@ static const int DAC456SaturationPoint;
 
 /* For HDMI hotplug to work, the kernel's board support must have set the pin
  * to STPIO_BIDIR_Z1 sometime before we run. */
-#if defined(ADB_BOX) 
+#if defined(ADB_BOX) || defined(ADB5800)
 #define GPIO_PIN_HOTPLUG stm_gpio(3,7)
 #else
 #define GPIO_PIN_HOTPLUG stm_gpio(2,2)

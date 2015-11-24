@@ -386,3 +386,23 @@ fe_core-objs += sagemcom88/core.o
 obj-m += fe_core.o
 endif
 endif
+
+ifdef ADB5800
+# single stb0899 (BSKA, BXZB)
+fe-core-bska-objs +=        adb/stb0899_algo.o
+fe-core-bska-objs +=        adb/stb0899_drv.o
+fe-core-bska-objs +=        adb/stb6100.o
+fe-core-bska-objs +=        adb/core.o
+obj-m += fe-core-bska.o
+# dual stb0899 (BSLA)
+fe-core-bsla-objs +=        adb_dual/stb0899_algo.o
+fe-core-bsla-objs +=        adb_dual/stb0899_drv.o
+fe-core-bsla-objs +=        adb_dual/stb6100.o
+fe-core-bsla-objs +=        adb_dual/core.o
+obj-m += fe-core-bsla.o 
+# dual stv0900 (BZZB)
+fe-core-bzzb-objs += adb_stv900/stv090x.o
+fe-core-bzzb-objs += adb_stv900/stb6100.o
+fe-core-bzzb-objs += adb_stv900/core.o
+obj-m += fe-core-bzzb.o
+endif

@@ -323,6 +323,8 @@ static int info_model_read(char *page, char **start, off_t off, int count, int *
 	int len = sprintf(page, "ufs910\n");
 #elif defined(ARIVALINK200)
 	int len = sprintf(page, "arivalink200\n");
+#elif defined(ADB5800)
+	int len = sprintf(page, "nbox\n");
 #else
 	int len = sprintf(page, "unknown\n");
 #endif
@@ -332,7 +334,8 @@ static int info_model_read(char *page, char **start, off_t off, int count, int *
 static int info_chipset_read(char *page, char **start, off_t off, int count, int *eof, void *data)
 {
 #if defined(UFS910) \
- || defined(ADB_BOX)
+ || defined(ADB_BOX) \
+ || defined(ADB5800)
 	int len = sprintf(page, "STi7100\n");
 #elif defined(ATEVIO7500) \
  || defined(UFS913) \
@@ -783,7 +786,7 @@ struct ProcStructure_s e2Proc[] =
 	{cProcEntry, "stb/misc/fan"                                                     , NULL, NULL, NULL, NULL, ""},
 #endif
 
-#if defined(ADB_BOX) || defined(SAGEMCOM88)
+#if defined(ADB_BOX) || defined(SAGEMCOM88) || defined(ADB5800)
 	{cProcDir  , "stb/fan"                                                          , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/hdmi/cec"                                                     , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/fan/fan_ctrl"                                                 , NULL, NULL, NULL, NULL, ""},

@@ -74,19 +74,19 @@ enum
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,30)
 static const struct i2c_device_id avs_id[] = {
-	{ "ak4705", AK4705 },
-	{ "ak4708", AK4708 },
-	{ "stv6412", STV6412 },
-	{ "stv6417", STV6417 },
-	{ "stv6418", STV6418 },
-	{ "stv6419", STV6419 },
-	{ "cxa2161", CXA2161 },
-	{ "vip2_avs", VIP2_AVS },
-	{ "vip1_avs", VIP1_AVS },
-	{ "fake_avs", FAKE_AVS },
-	{ "avs_pio", AVS_PIO },
-	{ "avs_none", AVS_NONE },
-	{ }
+        { "ak4705", AK4705 },
+        { "ak4708", AK4708 },
+        { "stv6412", STV6412 },
+        { "stv6417", STV6417 },
+        { "stv6418", STV6418 },
+        { "stv6419", STV6419 },
+        { "cxa2161", CXA2161 },
+        { "vip2_avs", VIP2_AVS },
+        { "vip1_avs", VIP1_AVS },
+        { "fake_avs", FAKE_AVS },
+        { "avs_pio", AVS_PIO },
+        { "avs_none", AVS_NONE },
+        { }
 };
 MODULE_DEVICE_TABLE(i2c, avs_id);
 #endif
@@ -116,7 +116,8 @@ static unsigned short normal_i2c[] = {
  || defined(IPBOX9900) \
  || defined(IPBOX99) \
  || defined(ADB_BOX) \
- || defined(CUBEREVO_3000HD)
+ || defined(CUBEREVO_3000HD) \
+ || defined(ADB5800)
 	0x4b, /* stv6412 / stv6417 / stv6418 */
 #elif defined(CUBEREVO_MINI_FTA) \
  || defined(CUBEREVO_250HD) \
