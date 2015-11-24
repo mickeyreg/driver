@@ -86,7 +86,7 @@ extern int reset_tsm;
     To make it working, dvbt driver needs to be modded too. See dvbt/as102 for reference
     Step1: enabling feeding from player2, needs changes in driver, see more comments in dvbt/as102
     Step2 in st-merger*/ 
-#if defined(ADB_BOX) || defined(ARIVALINK200) || defined(SAGEMCOM88) || defined(SPARK7162)
+#if defined(ADB_BOX) || defined(ARIVALINK200) || defined(SAGEMCOM88) || defined(SPARK7162) || defined(ADB5800)
 int (*StartFeed_)(struct dvb_demux_feed* Feed);
 int (*StopFeed_)(struct dvb_demux_feed* Feed);
 
@@ -98,6 +98,10 @@ void extern_startfeed_init(int(*StartFeed)(struct dvb_demux_feed* Feed), int(*St
 /* Sagemcom88 has 2 models with and without internal DVB-T. In both, DVB-T USB should be configured different way */
 #if defined(SAGEMCOM88)
 extern int hasdvbt;
+#endif
+
+#if defined(ADB5800)
+extern int ptihal;
 #endif
 
 EXPORT_SYMBOL(extern_startfeed_init);
@@ -172,6 +176,17 @@ int StartFeed(struct dvb_demux_feed *Feed)
 	else if (hasdvbt == 1) //model with internal DVB-T (uhd88), our DVB-T USB will be available as fourth FE
 	{
 		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT3) && (StartFeed_ != NULL))
+			StartFeed_(Feed);
+	}
+#elif defined(ADB5800)
+	if (ptihal == 0) // BSKA, BXZB
+	{
+		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT1) && (StartFeed_ != NULL))
+			StartFeed_(Feed);
+	}
+	else if (ptihal == 1) // BSLA, BZZB
+	{
+		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StartFeed_ != NULL))
 			StartFeed_(Feed);
 	}
 #endif
@@ -387,6 +402,17 @@ int StopFeed(struct dvb_demux_feed *Feed)
 	else if (hasdvbt == 1) //model with internal DVB-T (uhd88), our DVB-T USB will be available as fourth FE
 	{
 		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT3) && (StopFeed_ != NULL))
+			StopFeed_(Feed);
+	}
+#elif defined(ADB5800)
+	if (ptihal == 0) // BSKA, BXZB
+	{
+		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT1) && (StopFeed_ != NULL))
+			StopFeed_(Feed);
+	}
+	else if (ptihal == 1) // BSLA, BZZB
+	{
+		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StopFeed_ != NULL))
 			StopFeed_(Feed);
 	}
 #endif

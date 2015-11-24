@@ -58,7 +58,7 @@ struct stmfbio_output_configuration
 	__u8  hue;
 };
 
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 #define SAAIOSWSS       10 /* set wide screen signaling data */
 #define SAA_WSS_OFF     8
 #define SAA_WSS_43F     0
@@ -124,7 +124,8 @@ static int current_input = ENCODER;
  || defined(IPBOX99) \
  || defined(IPBOX55) \
  || defined(ADB_BOX) \
- || defined(VITAMIN_HD5000)
+ || defined(VITAMIN_HD5000) \
+ || defined(ADB5800)
 static int current_volume = 0;
 #else
 static int current_volume = 31;
@@ -200,7 +201,8 @@ int proc_avs_0_volume_write(struct file* file, const char __user* buf, unsigned 
  || defined(IPBOX99) \
  || defined(IPBOX55) \
  || defined(ADB_BOX) \
- || defined(VITAMIN_HD5000)
+ || defined(VITAMIN_HD5000) \
+ || defined(ADB5800)
 		current_volume = volume;
 #else
 		/* Dagobert: 04.10.2009: e2 delivers values from 0 to 63 db. the ak4705
@@ -296,7 +298,7 @@ int proc_avs_0_input_write(struct file* file, const char __user* buf, unsigned l
 	char* myString;
 	ssize_t ret = -ENOMEM;
 	/* int result; */
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 	struct stmfbio_output_configuration outputConfig;
 	struct stmfb_info* info = stmfb_get_fbinfo_ptr();
 	int err;
@@ -327,12 +329,12 @@ int proc_avs_0_input_write(struct file* file, const char __user* buf, unsigned l
 			avs_command_kernel(SAAIOSSRCSEL, SAA_SRC_ENC);
 			// Note: Volumne is not changed directly but by using the MIXER instead of the AVS.
 			// So this should always be set to the maximum
-#if defined(UFS910) || defined(ADB_BOX)
+#if defined(UFS910) || defined(ADB_BOX) || defined(ADB5800)
 			avs_command_kernel(AVSIOSVOL, (void*) 31);
 #else
 			avs_command_kernel(AVSIOSVOL, (void*) 0);
 #endif
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 			avs_command_kernel(SAAIOSWSS, (void*) SAA_WSS_43F);
 			outputConfig.hdmi_config &= ~STMFBIO_OUTPUT_HDMI_DISABLED;
 #endif
@@ -342,13 +344,13 @@ int proc_avs_0_input_write(struct file* file, const char __user* buf, unsigned l
 		{
 			avs_command_kernel(SAAIOSSRCSEL, (void*) SAA_SRC_SCART);
 			avs_command_kernel(AVSIOSVOL, (void*) current_volume);
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 			avs_command_kernel(SAAIOSWSS, (void*) SAA_WSS_OFF);
 			outputConfig.hdmi_config |= STMFBIO_OUTPUT_HDMI_DISABLED;
 #endif
 			current_input = SCART;
 		}
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 		err = stmfb_set_output_configuration(&outputConfig, info);
 		if (err != 0)
 		{

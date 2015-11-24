@@ -47,7 +47,7 @@ extern int snd_pseudo_integer_get(struct snd_kcontrol* kcontrol, struct snd_ctl_
 extern int snd_pseudo_integer_put(struct snd_kcontrol* kcontrol, struct snd_ctl_elem_value* ucontrol);
 int avs_command_kernel(unsigned int cmd, void* arg);
 
-#if defined(ADB_BOX)
+#if defined(ADB5800)
 int proc_audio_delay_pcm_write(struct file* file, const char __user* buf, unsigned long count, void* data)
 {
 	char* page;

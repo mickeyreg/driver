@@ -244,7 +244,7 @@ OS_Status_t   OS_SemaphoreSignal(OS_Semaphore_t          *Semaphore);
 OS_Status_t   OS_InitializeMutex(OS_Mutex_t             *Mutex);
 OS_Status_t   OS_TerminateMutex(OS_Mutex_t             *Mutex);
 OS_Status_t   OS_LockMutex(OS_Mutex_t             *Mutex);
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 int           OS_LockMutex_trylock(OS_Mutex_t             *Mutex);                                              //Added by Duola
 #endif
 OS_Status_t   OS_UnLockMutex(OS_Mutex_t             *Mutex);
