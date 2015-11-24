@@ -52,8 +52,6 @@ endif
 
 ifdef ADB_BOX
 obj-y += adb_box_vfd/
-obj-y += adb_box_vfd/front_bska/
-obj-y += adb_box_vfd/front_bsla/
 endif
 
 ifdef SPARK
@@ -151,4 +149,9 @@ ifdef ARIVALINK200
 ifneq (,$(wildcard $(DRIVER_TOPDIR)/frontcontroller/front_ArivaLink200 ))
 obj-y += front_ArivaLink200/
 endif
+endif
+
+ifdef ADB5800
+obj-y += front_bska/
+obj-y += front_bsla/
 endif
