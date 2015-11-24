@@ -1,41 +1,16 @@
-#ifndef _SCI_7100_H
-#define _SCI_7100_H
+#ifndef _SCI_7111_H
+#define _SCI_7111_H
 
-#if defined(CUBEREVO) || defined(CUBEREVO_MINI) || defined(CUBEREVO_MINI2) || \
-    defined(CUBEREVO_250HD) || defined(CUBEREVO_9500HD) || \
-    defined(CUBEREVO_2000HD) || defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO_3000HD)
-#define CUBEBOX
-#else
-#undef  CUBEBOX
-#endif
-
-#if defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(ARIVALINK200)
-#define IPBOX
-#else
-#undef IPBOX
-#endif
-
-/* Hellmaster1024 Octagon1008 and Fortis HDBOX need these defines, maybe other sti7100/sti7101 based STB need this defines too
-*/
-#if defined(OCTAGON1008) || defined(FORTIS_HDBOX) || defined(CUBEBOX) || defined(IPBOX)
-#define SUPPORT_NO_VOLTAGE
-#define SUPPORT_NO_AUTOSET
-#endif
-
-#if defined(ADB_BOX) || defined(ADB5800)
-#define SUPPORT_NO_VOLTAGE
-#define SUPPORT_NO_AUTOSET
-#endif
-
-#define SYS_CFG_BASE_ADDRESS        0x19001000
-#define SYS_CFG7                    0x11C
+#define SYS_CFG_BASE_ADDRESS     	0xFE001000
+#define SYS_CFG5                  	0x114
+#define SYS_CFG7                  	0x11C
 
 /******* SC 0 *******/
 
 #define SCI0_INT_DETECT             80
 #define SCI0_INT_RX_TX              123
 
-#define PIO0_BASE_ADDRESS           0x18020000
+#define PIO0_BASE_ADDRESS           0xfd020000
 #define PIO_P0C0                    0x20
 #define PIO_P0C1                    0x30
 #define PIO_P0C2                    0x40
@@ -46,9 +21,9 @@
 #define PIO_SET_P0COMP              0x54
 #define PIO_CLR_P0COMP              0x58
 
-#define SCI0_BASE_ADDRESS           0x18048000
+#define SCI0_BASE_ADDRESS           0xfd048000
 
-#define ASC0_BASE_ADDRESS           0x18030000
+#define ASC0_BASE_ADDRESS           0xfd030000
 #define ASC0_BAUDRATE               0x00
 #define ASC0_TX_BUF                 0x004
 #define ASC0_RX_BUF                 0x008
@@ -62,7 +37,7 @@
 #define ASC0_RETRIES                0x028
 
 /* Test SC0 voltage to 3v. */
-#define PIO4_BASE_ADDRESS           0x18024000
+#define PIO4_BASE_ADDRESS           0xfd024000
 
 #define PIO_CLR_P4C0                0x28
 #define PIO_CLR_P4C1                0x38
@@ -78,7 +53,7 @@
 #define SCI1_INT_DETECT             84
 #define SCI1_INT_RX_TX              122
 
-#define PIO1_BASE_ADDRESS           0x18021000
+#define PIO1_BASE_ADDRESS           0xfd021000
 #define PIO_P1C0                    0x20
 #define PIO_P1C1                    0x30
 #define PIO_P1C2                    0x40
@@ -89,9 +64,9 @@
 #define PIO_SET_P1COMP              0x54
 #define PIO_CLR_P1COMP              0x58
 
-#define SCI1_BASE_ADDRESS           0x18049000
+#define SCI1_BASE_ADDRESS           0xfd049000
 
-#define ASC1_BASE_ADDRESS           0x18031000
+#define ASC1_BASE_ADDRESS           0xfd031000
 #define ASC1_BAUDRATE               0x00
 #define ASC1_TX_BUF                 0x004
 #define ASC1_RX_BUF                 0x008
@@ -105,7 +80,7 @@
 #define ASC1_RETRIES                0x028
 
 /* Test SC1 voltage to 3v. */
-#define PIO3_BASE_ADDRESS           0x18023000
+#define PIO3_BASE_ADDRESS           0xfd023000
 
 #define PIO_CLR_P3C0                0x28
 #define PIO_CLR_P3C1                0x38
@@ -122,4 +97,4 @@
 #define ACTIVE_LOW                  0
 #define SCI_CLASS                   1 //SCI_CLASS_A     /**< Operating class of SCI */
 
-#endif  /* _SCI_7100_H */
+#endif  /* _SCI_7111_H */
