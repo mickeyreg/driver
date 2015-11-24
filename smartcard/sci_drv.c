@@ -383,7 +383,7 @@ void smartcard_reset(SCI_CONTROL_BLOCK *sci, unsigned char wait)
 	if (sci->id == 0)
 	{
 		disable_irq(SCI0_INT_RX_TX);
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 		/* VCC cmd low */
 		stpio_set_pin(sci->cmdvcc, 0);
 #else
@@ -395,7 +395,7 @@ void smartcard_reset(SCI_CONTROL_BLOCK *sci, unsigned char wait)
 		//mdelay(500);
 		//change to non Busy-Waiting
 		msleep(500);
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 		/* VCC cmd low */
 		stpio_set_pin(sci->cmdvcc, 1);
 #else
@@ -406,7 +406,7 @@ void smartcard_reset(SCI_CONTROL_BLOCK *sci, unsigned char wait)
 	else if (sci->id == 1)
 	{
 		disable_irq(SCI1_INT_RX_TX);
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 		/* VCC cmd low */
 		stpio_set_pin(sci->cmdvcc, 0);
 #else
@@ -418,7 +418,7 @@ void smartcard_reset(SCI_CONTROL_BLOCK *sci, unsigned char wait)
 		//mdelay(500);
 		//change to non Busy-Waiting
 		msleep(500);
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 		/* VCC cmd low */
 		stpio_set_pin(sci->cmdvcc, 1);
 #else
@@ -485,7 +485,7 @@ INT smartcard_voltage_config(SCI_CONTROL_BLOCK *sci, UINT vcc)
 		{
 			sci->sci_atr_class = SCI_CLASS_B;
 #if !defined(SUPPORT_NO_VOLTAGE)
-#if !defined(SPARK) && !defined(HL101) && !defined(ATEVIO7500) && !defined(ADB_BOX) && !defined(VITAMIN_HD5000)  // no votage control
+#if !defined(SPARK) && !defined(HL101) && !defined(ATEVIO7500) && !defined(ADB_BOX) && !defined(VITAMIN_HD5000) && !defined(ADB5800)  // no votage control
 			set_reg_writeonly(sci, BASE_ADDRESS_PIO4, PIO_CLR_P4OUT, 0x40);
 #endif
 #endif
@@ -494,7 +494,7 @@ INT smartcard_voltage_config(SCI_CONTROL_BLOCK *sci, UINT vcc)
 		{
 			sci->sci_atr_class = SCI_CLASS_A;
 #if !defined(SUPPORT_NO_VOLTAGE)
-#if !defined(SPARK) && !defined(HL101) && !defined(ATEVIO7500) && !defined(ADB_BOX) && !defined(VITAMIN_HD5000)  // no votage control
+#if !defined(SPARK) && !defined(HL101) && !defined(ATEVIO7500) && !defined(ADB_BOX) && !defined(VITAMIN_HD5000) && !defined(ADB5800)  // no votage control
 			set_reg_writeonly(sci, BASE_ADDRESS_PIO4, PIO_SET_P4OUT, 0x40);
 #endif
 #endif
@@ -504,7 +504,7 @@ INT smartcard_voltage_config(SCI_CONTROL_BLOCK *sci, UINT vcc)
 			PERROR("Invalid Vcc value '%d', set Vcc 5V", vcc);
 			sci->sci_atr_class = SCI_CLASS_A;
 #if !defined(SUPPORT_NO_VOLTAGE)
-#if !defined(SPARK) && !defined(HL101) && !defined(ATEVIO7500) && !defined(ADB_BOX) // no votage control
+#if !defined(SPARK) && !defined(HL101) && !defined(ATEVIO7500) && !defined(ADB_BOX) && !defined(ADB5800) // no votage control
 			set_reg_writeonly(sci, BASE_ADDRESS_PIO4, PIO_SET_P4OUT, 0x40);
 #endif
 #endif
@@ -517,7 +517,7 @@ INT smartcard_voltage_config(SCI_CONTROL_BLOCK *sci, UINT vcc)
 		{
 			sci->sci_atr_class = SCI_CLASS_B;
 #if !defined(SUPPORT_NO_VOLTAGE)
-#if !defined(SPARK) && !defined(HL101) && !defined(ATEVIO7500) && !defined(ADB_BOX)  // no votage control
+#if !defined(SPARK) && !defined(HL101) && !defined(ATEVIO7500) && !defined(ADB_BOX) && !defined(ADB5800)  // no votage control
 			set_reg_writeonly(sci, BASE_ADDRESS_PIO3, PIO_CLR_P3OUT, 0x40);
 #endif
 #endif
@@ -526,7 +526,7 @@ INT smartcard_voltage_config(SCI_CONTROL_BLOCK *sci, UINT vcc)
 		{
 			sci->sci_atr_class = SCI_CLASS_A;
 #if !defined(SUPPORT_NO_VOLTAGE)
-#if !defined(SPARK) && !defined(HL101) && !defined(ATEVIO7500) && !defined(ADB_BOX)  // no votage control
+#if !defined(SPARK) && !defined(HL101) && !defined(ATEVIO7500) && !defined(ADB_BOX) && !defined(ADB5800)  // no votage control
 			set_reg_writeonly(sci, BASE_ADDRESS_PIO3, PIO_SET_P3OUT, 0x40);
 #endif
 #endif
@@ -536,7 +536,7 @@ INT smartcard_voltage_config(SCI_CONTROL_BLOCK *sci, UINT vcc)
 			PERROR("Invalid Vcc value '%d', set Vcc 5V", vcc);
 			sci->sci_atr_class = SCI_CLASS_A;
 #if !defined(SUPPORT_NO_VOLTAGE)
-#if !defined(SPARK) && !defined(HL101) && !defined(ATEVIO7500) && !defined(ADB_BOX)  // no votage control
+#if !defined(SPARK) && !defined(HL101) && !defined(ATEVIO7500) && !defined(ADB_BOX) && !defined(ADB5800)  // no votage control
 			set_reg_writeonly(sci, BASE_ADDRESS_PIO3, PIO_CLR_P3OUT, 0x40);
 #endif
 #endif
@@ -899,7 +899,7 @@ static void sci_detect_change(SCI_CONTROL_BLOCK *sci)
 	{
 		dprintk(1, "Removing Smartcard %d!\n", sci->id);
 		sci->atr_status = SCI_WITHOUT_ATR;
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 		/* VCC cmd low */
 		stpio_set_pin(sci->cmdvcc, 0);
 #else
@@ -920,7 +920,7 @@ static void sci_detect_change(SCI_CONTROL_BLOCK *sci)
 	{
 		dprintk(1, "Inserting Smartcard %d!\n", sci->id);
 		sci_hw_init(sci);
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 		stpio_set_pin(sci->cmdvcc, 1);
 #else
 		stpio_set_pin(sci->cmdvcc, 0);
@@ -1081,7 +1081,7 @@ void sci_exit(void)
 		msleep(10);
 		if (sci->cmdvcc != NULL)
 		{
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 			stpio_set_pin(sci->cmdvcc, 0); // active low
 #else
 			stpio_set_pin(sci->cmdvcc, 1);
@@ -1311,7 +1311,7 @@ void sci_detect_handler(void *params)
 	unsigned int status;
 	int last_status = 0;
 	sci->polling = 1;
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 	/* VCC cmd low */
 	stpio_set_pin(sci->cmdvcc, 0);
 #else
@@ -1553,7 +1553,7 @@ SCI_ERROR sci_reset(SCI_CONTROL_BLOCK *sci)
 		return rc;
 	}
 	/* FIXME: Add wake_up_interruptible() */
-#if defined(ADB_BOX) || defined(VITAMIN_HD5000)
+#if defined(ADB_BOX) || defined(VITAMIN_HD5000) || defined(ADB5800)
 	/* VCC cmd low  (active) */
 	stpio_set_pin(sci->cmdvcc, 1);
 #else
@@ -1883,7 +1883,7 @@ static int sci_close(struct inode *inode, struct file *filp)
 			dprintk(1, "sc[%d] device is not opend: %d\n", sci->id, sci->driver_inuse);
 			rc = -EINVAL;
 		}
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 		stpio_set_pin(sci->cmdvcc, 0); // disable TDA8024
 #else
 		stpio_set_pin(sci->cmdvcc, 1);
@@ -2178,7 +2178,7 @@ int sci_ioctl(struct inode *inode,
 			}
 			if (rc || !sci->WWT)
 			{
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 				stpio_set_pin(sci->cmdvcc, 0);
 #else
 				stpio_set_pin(sci->cmdvcc, 1);
