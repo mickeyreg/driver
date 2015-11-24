@@ -16,7 +16,7 @@
 
 
 #include "front_bsla.h"
-#include "../../vfd/utf.h"
+#include "../vfd/utf.h"
 
 //static int buttoninterval = HZ / 4; //1000/4=250ms
 static int buttoninterval = HZ / 3;
