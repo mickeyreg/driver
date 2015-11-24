@@ -170,6 +170,10 @@ enum
 };
 #endif
 
+#if defined(ADB5800)
+extern int tsinmode;
+#endif
+
 extern int highSR;
 
 extern void paceSwtsByPti(void);
@@ -233,7 +237,8 @@ static const char *fdma_cap_hb[] = { STM_DMA_CAP_HIGH_BW, NULL };
  || defined(IPBOX9900) \
  || defined(IPBOX99) \
  || defined(IPBOX55) \
- || defined(HL101)
+ || defined(HL101) \
+ || defined(ADB5800)
 //injecting stream from DVB-T USB driver to SWTS
 void extern_inject_data(u32 *data, off_t size)
 {
@@ -634,7 +639,8 @@ void stm_tsm_init(int use_cimax)
  || defined(IPBOX55) \
  || defined(ADB_BOX) \
  || defined(CUBEREVO_2000HD) \
- || defined(SAGEMCOM88) // none ci targets
+ || defined(SAGEMCOM88) \
+ || defined(ADB5800) /* none ci targets */
 	use_cimax = 0;
 #endif
 	/* first configure sysconfig */
@@ -1517,7 +1523,8 @@ else
  || defined(IPBOX9900) \
  || defined(IPBOX99) \
  || defined(IPBOX55) \
- || defined(HL101)
+ || defined(HL101) \\
+ || defined(ADB5800)
 		printk(">>Init DVBT-USB\n");
 		tsm_handle.tsm_io = ioremap(TSMergerBaseAddress, 0x0900);
 		tsm_handle.swts_channel = 3;
@@ -1617,6 +1624,16 @@ else
 			int chan = n;
 #if defined(SAGEMCOM88)
 			int options = (n * 0x10000) + STM_SERIAL_NOT_PARALLEL;
+			printk("TsinMode = Serial *st-merger*\n\t");
+#elif defined(ADB5800)
+			int options = n * 0x10000;
+			if (tsinmode==0) { // BSKA, BXZB, BSLA
+				printk("TsinMode = Parallel *st-merger*\n\t");
+			}
+			if (tsinmode==1) { // BZZB
+				options = options + STM_SERIAL_NOT_PARALLEL;
+				printk("TsinMode = Serial *st-merger*\n\t");
+			}
 #else
 			int options = n * 0x10000;
 #endif // alt
@@ -1644,7 +1661,7 @@ else
 					   TSM_PRIORITY(0xf) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES,
 					   tsm_io + TSM_STREAM_CONF(chan));
 			}
-#elif defined(SAGEMCOM88)
+#elif defined(SAGEMCOM88) || defined(ADB5800)
 			writel((readl(tsm_io + TSM_STREAM_CONF(chan)) & TSM_RAM_ALLOC_START(0xff)) |
 				   (options & STM_SERIAL_NOT_PARALLEL ? TSM_SERIAL_NOT_PARALLEL : 0) |
 				   (options & STM_INVERT_CLOCK ? TSM_INVERT_BYTECLK : 0) |

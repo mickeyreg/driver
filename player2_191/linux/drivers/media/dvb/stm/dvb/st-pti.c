@@ -96,7 +96,8 @@ extern void stv090x_register_frontend(struct dvb_adapter *dvb_adap);
  || defined(IPBOX9900) \
  || defined(IPBOX99) \
  || defined(IPBOX55) \
- || defined(ADB_BOX)
+ || defined(ADB_BOX) \
+ || defined(ADB5800)
 extern void fe_core_register_frontend(struct dvb_adapter *dvb_adap);
 #elif defined(CUBEREVO) \
  || defined(CUBEREVO_MINI2) \
@@ -134,6 +135,10 @@ extern int hasdvbt;
 extern int twinhead;
 #endif
 
+#if defined(ADB5800)
+extern int ptihal;
+#endif
+
 int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
 					 struct DeviceContext_s *DeviceContext)
 {
@@ -150,8 +155,7 @@ int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
 	 if playback via SWTS is activated. Otherwise playback would
 	 unnecessarily waste a buffer (might lead to loss of a second
 	 recording). */
-#if defined(ADB_BOX) \
- || defined(SAGEMCOM88) \
+#if defined(SAGEMCOM88) \
  || defined(SPARK7162)
 	if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
 			(pSession->source <= DMX_SOURCE_FRONT3)) ||
@@ -322,8 +326,7 @@ int stpti_stop_feed(struct dvb_demux_feed *dvbdmxfeed,
 	}
 	/* PTI was only started if the source is one of two frontends or
 	 if playback via SWTS was activated. */
-#if defined(ADB_BOX) \
- || defined(SAGEMCOM88) \
+#if defined(SAGEMCOM88) \
  || defined(SPARK7162)
 	if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
 			(pSession->source <= DMX_SOURCE_FRONT3)) ||
@@ -411,7 +414,8 @@ static int convert_source(const dmx_source_t source)
  || defined(ADB_BOX) \
  || defined(SPARK) \
  || defined(SPARK7162) \
- || defined(SAGEMCOM88)
+ || defined(SAGEMCOM88) \
+ || defined(ADB5800)
 			tag = TSIN2;
 #else
 			tag = TSIN0;
@@ -445,6 +449,9 @@ static int convert_source(const dmx_source_t source)
 			{
 				tag = TSIN1;
 			}
+#elif defined(ADB5800)
+			if (ptihal == 0) tag = SWTS0;	// BSKA, BXZB - DVB-T USB
+			if (ptihal == 1) tag = TSIN0;	// BSLA, BZZB - second DVB-S2
 #else
 			tag = TSIN1;
 #endif
@@ -489,6 +496,14 @@ static int convert_source(const dmx_source_t source)
  || defined(HL101)
 		case DMX_SOURCE_DVR0:
 			tag = TSIN1; //fake tsin for DVR (DVBT-USB at swts0)
+			break;
+#elif defined(ADB5800)
+		case DMX_SOURCE_FRONT2:
+			if (ptihal == 0) tag = TSIN0;	// BSKA, BXZB - fake tsin...
+			if (ptihal == 1) tag = SWTS0;	// BSLA, BZZB - DVB-T USB
+			break;
+		case DMX_SOURCE_DVR0:
+			tag = TSIN1;    //fake tsin for DVR (DVBT-USB at swts0)
 			break;
 #elif defined(IPBOX9900) \
  || defined(IPBOX99)
@@ -606,7 +621,8 @@ void ptiInit(struct DeviceContext_s *pContext)
  || defined(IPBOX55) \
  || defined(ADB_BOX) \
  || defined(UFS913) \
- || defined(SAGEMCOM88)
+ || defined(SAGEMCOM88) \
+ || defined(ADB5800)
 		pti_hal_init(&pti, &pContext->DvbDemux, demultiplexDvbPackets, 2);
 #elif defined(SPARK7162)
 		pti_hal_init(&pti, &pContext->DvbDemux, demultiplexDvbPackets, 3);
@@ -633,7 +649,8 @@ void ptiInit(struct DeviceContext_s *pContext)
  || defined(IPBOX9900) \
  || defined(IPBOX99) \
  || defined(IPBOX55) \
- || defined(ADB_BOX)
+ || defined(ADB_BOX) \
+ || defined(ADB5800)
 		fe_core_register_frontend(&pContext->DvbContext->DvbAdapter);
 #elif defined(CUBEREVO) \
  || defined(CUBEREVO_MINI2) \
@@ -707,7 +724,8 @@ int SetSource(struct dmx_demux *demux, const dmx_source_t *src)
  || defined(IPBOX9900) \
  || defined(IPBOX99) \
  || defined(IPBOX55) \
- || defined(HL101)
+ || defined(HL101) \
+ || defined(ADB5800)
 	if (*src == DMX_SOURCE_FRONT0)
 	{
 		printk("DMX_SOURCE_FRONT0\n");

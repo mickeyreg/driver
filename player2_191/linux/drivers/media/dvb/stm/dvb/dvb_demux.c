@@ -95,7 +95,8 @@ extern int reset_tsm;
  || defined(IPBOX9900) \
  || defined(IPBOX99) \
  || defined(IPBOX55) \
- || defined(HL101)
+ || defined(HL101) \
+ || defined(ADB5800)
 int (*StartFeed_)(struct dvb_demux_feed *Feed);
 int (*StopFeed_)(struct dvb_demux_feed *Feed);
 
@@ -112,6 +113,10 @@ extern int hasdvbt;
 #if defined(IPBOX9900) \
  || defined(IPBOX99)
 extern int twinhead;
+#endif
+
+#if defined(ADB5800)
+extern int ptihal;
 #endif
 
 EXPORT_SYMBOL(extern_startfeed_init);
@@ -198,6 +203,18 @@ int StartFeed(struct dvb_demux_feed *Feed)
 			StartFeed_(Feed);
 	}
 	else
+	{
+		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StartFeed_ != NULL))
+			StartFeed_(Feed);
+	}
+#endif
+#elif defined(ADB5800)
+	if (ptihal == 0) // BSKA, BXZB
+	{
+		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT1) && (StartFeed_ != NULL))
+			StartFeed_(Feed);
+	}
+	else if (ptihal == 1) // BSLA, BZZB
 	{
 		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StartFeed_ != NULL))
 			StartFeed_(Feed);
@@ -428,6 +445,17 @@ int StopFeed(struct dvb_demux_feed *Feed)
 			StopFeed_(Feed);
 	}
 	else
+	{
+		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StopFeed_ != NULL))
+			StopFeed_(Feed);
+	}
+#elif defined(ADB5800)
+	if (ptihal == 0) // BSKA, BXZB
+	{
+		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT1) && (StopFeed_ != NULL))
+			StopFeed_(Feed);
+	}
+	else if (ptihal == 1) // BSLA, BZZB
 	{
 		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StopFeed_ != NULL))
 			StopFeed_(Feed);

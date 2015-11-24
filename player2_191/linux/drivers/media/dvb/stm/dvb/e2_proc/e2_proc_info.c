@@ -56,6 +56,8 @@ int proc_info_model_read(char *page, char **start, off_t off, int count,
 	len = sprintf(page, "ariva@link200\n");
 #elif defined(UFS910)
 	len = sprintf(page, "ufs910\n");
+#elif defined(ADB5800)
+	len = sprintf(page, "nbox\n");
 #else
 	len = sprintf(page, "unknown\n");
 #endif

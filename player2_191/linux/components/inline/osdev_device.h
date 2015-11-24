@@ -627,7 +627,7 @@ static inline unsigned int __getlw(unsigned long long a)
 	return (unsigned int)(a & 0xffffffff);
 }
 
-#endif
+#endif // H_OSINLINE
 
 // -----------------------------------------------------------------------------------------------
 

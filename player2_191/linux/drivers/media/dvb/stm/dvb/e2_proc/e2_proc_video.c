@@ -15,7 +15,7 @@
 
 #define STMFBIO_VAR_CAPS_OPACITY (1L<<4)
 
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,23)
 #include <linux/stpio.h>
 #else
@@ -72,7 +72,7 @@ extern int stmfb_get_var_ex(struct stmfbio_var_screeninfo_ex *v, struct stmfb_in
 extern int stmfb_set_var_ex(struct stmfbio_var_screeninfo_ex *v, struct stmfb_info *i);
 extern struct stmfb_info *stmfb_get_fbinfo_ptr(void);
 extern int avs_command_kernel(unsigned int cmd, void *arg);
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 extern void switch_video_command_kernel(char *kbuf);
 #endif
 
@@ -285,7 +285,7 @@ static int aspect_ply = (video_format_t) VIDEO_FORMAT_16_9;
 static int policy_e2 = VIDEO_POL_LETTER_BOX;
 static int policy_ply = (video_displayformat_t) VIDEO_LETTER_BOX;
 
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 static int video_switch = 0;
 static int video_switch_type = 0; //default 0 / 0-bska/bsla 1-bxzb
 #endif
@@ -380,7 +380,7 @@ int proc_video_aspect_get(void)
 	return aspect_ply;
 }
 
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 int proc_video_switch_type_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
 	char *page;
@@ -1516,13 +1516,11 @@ int proc_video_alpha_read(char *page, char **start, off_t off, int count,
 #ifdef VERY_VERBOSE
 	printk("%s\n", __FUNCTION__);
 #endif
-#if !defined(ADB_BOX)
+#if !defined(ADB_BOX) || defined(ADB5800)
 	struct stmfb_info *info = stmfb_get_fbinfo_ptr();
 	struct stmfbio_var_screeninfo_ex varEx;
 	stmfb_get_var_ex(&varEx, info);
-	len = sprintf(page, "%d\n", varEx.opacity);
-#endif
-#if defined(ADB_BOX)
+	//len = sprintf(page, "%d\n", varEx.opacity);
 	len = sprintf(page, "0\n");
 #endif
 	return len;
