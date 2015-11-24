@@ -13,7 +13,7 @@
 #include <linux/irq.h>
 #include <linux/interrupt.h>
 #include <linux/reboot.h>
-#include "../../vfd/utf.h"
+#include "../vfd/utf.h"
 
 #include "front_bska.h"
 

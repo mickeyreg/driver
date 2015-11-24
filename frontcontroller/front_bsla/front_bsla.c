@@ -16,7 +16,7 @@
 
 
 #include "front_bsla.h"
-#include "../../vfd/utf.h"
+#include "../vfd/utf.h"
 
 static int buttoninterval = 350/*ms*/;
 static struct timer_list button_timer;
