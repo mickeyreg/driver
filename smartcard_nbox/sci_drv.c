@@ -2565,7 +2565,7 @@ static int __init sci_module_init(void)
             device_create(sci_module_class, NULL, MKDEV(MAJOR_NUM, MINOR_START + i), NULL, "sci%d", i);
 #else
             class_device_create(sci_module_class, NULL, dev, NULL, "sci%d", i);
-#endif
+#endif            
     }
     else
     {
