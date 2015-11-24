@@ -85,6 +85,7 @@ extern int reset_tsm;
 
 /* >>> DVBT USB */
 /* j00zek comment: To enable DVBT USB we need to integrate it with player2. take demuxes from it and inject data through SWTS
+<<<<<<< HEAD
  To make it working, dvbt driver needs to be modded too. See dvbt/as102 for reference
  Step1: enabling feeding from player2, needs changes in driver, see more comments in dvbt/as102
  Step2 in st-merger*/
@@ -101,6 +102,16 @@ int (*StartFeed_)(struct dvb_demux_feed *Feed);
 int (*StopFeed_)(struct dvb_demux_feed *Feed);
 
 void extern_startfeed_init(int(*StartFeed)(struct dvb_demux_feed *Feed), int(*StopFeed)(struct dvb_demux_feed *Feed))
+=======
+    To make it working, dvbt driver needs to be modded too. See dvbt/as102 for reference
+    Step1: enabling feeding from player2, needs changes in driver, see more comments in dvbt/as102
+    Step2 in st-merger*/ 
+#if defined(ADB_BOX) || defined(ARIVALINK200) || defined(SAGEMCOM88) || defined(SPARK7162) || defined(ADB5800)
+int (*StartFeed_)(struct dvb_demux_feed* Feed);
+int (*StopFeed_)(struct dvb_demux_feed* Feed);
+
+void extern_startfeed_init(int(*StartFeed)(struct dvb_demux_feed* Feed), int(*StopFeed)(struct dvb_demux_feed* Feed))
+>>>>>>> 017bbbd... The ADB5800 changes in player2 drivers.
 {
 	StartFeed_ = StartFeed;
 	StopFeed_ = StopFeed;
@@ -110,11 +121,14 @@ void extern_startfeed_init(int(*StartFeed)(struct dvb_demux_feed *Feed), int(*St
 extern int hasdvbt;
 #endif
 
+<<<<<<< HEAD
 #if defined(IPBOX9900) \
  || defined(IPBOX99)
 extern int twinhead;
 #endif
 
+=======
+>>>>>>> 017bbbd... The ADB5800 changes in player2 drivers.
 #if defined(ADB5800)
 extern int ptihal;
 #endif
@@ -195,6 +209,7 @@ int StartFeed(struct dvb_demux_feed *Feed)
 		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT3) && (StartFeed_ != NULL))
 			StartFeed_(Feed);
 	}
+<<<<<<< HEAD
 #elif defined(IPBOX9900) \
  || defined(IPBOX99)
 	if (twinhead == 1)
@@ -208,6 +223,8 @@ int StartFeed(struct dvb_demux_feed *Feed)
 			StartFeed_(Feed);
 	}
 #endif
+=======
+>>>>>>> 017bbbd... The ADB5800 changes in player2 drivers.
 #elif defined(ADB5800)
 	if (ptihal == 0) // BSKA, BXZB
 	{
@@ -437,6 +454,7 @@ int StopFeed(struct dvb_demux_feed *Feed)
 		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT3) && (StopFeed_ != NULL))
 			StopFeed_(Feed);
 	}
+<<<<<<< HEAD
 #elif defined(IPBOX9900) \
  || defined(IPBOX99)
 	if (twinhead == 1)
@@ -449,6 +467,8 @@ int StopFeed(struct dvb_demux_feed *Feed)
 		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StopFeed_ != NULL))
 			StopFeed_(Feed);
 	}
+=======
+>>>>>>> 017bbbd... The ADB5800 changes in player2 drivers.
 #elif defined(ADB5800)
 	if (ptihal == 0) // BSKA, BXZB
 	{
