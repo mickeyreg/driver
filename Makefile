@@ -137,6 +137,9 @@ endif
 ifdef FORTIS_DP7000
 CCFLAGSY += -DFORTIS_DP7000
 endif
+ifdef ADB5800
+CCFLAGSY += -DADB5800
+endif
 ifneq (,$(findstring 2.6.3,$(KERNELVERSION)))
 ccflags-y += $(CCFLAGSY)
 else
@@ -341,6 +344,14 @@ endif
 
 ifdef ARIVALINK200
 obj-y += smartcard/
+obj-y += cec_adb_box/
+obj-y += dvbt/as102/
+obj-y += dvbt/siano/
+endif
+
+ifdef ADB5800
+obj-y += smartcard_nbox/
+obj-y += adb_box_fan/
 obj-y += cec_adb_box/
 obj-y += dvbt/as102/
 obj-y += dvbt/siano/
