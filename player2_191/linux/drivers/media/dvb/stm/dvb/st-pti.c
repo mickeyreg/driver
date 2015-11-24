@@ -78,7 +78,7 @@ extern void avl2108_register_frontend(struct dvb_adapter *dvb_adap);
 extern void fe_core_register_frontend(struct dvb_adapter *dvb_adap);
 #elif defined(FORTIS_HDBOX) || defined(UFS912) || defined(SPARK) || defined(HS7110) || defined(HS7810A) || defined(HS7119) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(VITAMIN_HD5000) || defined(SAGEMCOM88)
 extern void stv090x_register_frontend(struct dvb_adapter *dvb_adap);
-#elif defined(HL101) || defined(VIP1_V2) || defined(VIP2_V1) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(ADB_BOX)
+#elif defined(HL101) || defined(VIP1_V2) || defined(VIP2_V1) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(ADB_BOX) || defined(ADB5800)
 extern void fe_core_register_frontend(struct dvb_adapter *dvb_adap);
 #elif defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO_3000HD)
 extern void socket_register_adapter(struct dvb_adapter *dvb_adap);
@@ -104,6 +104,10 @@ extern int swts;
 extern int hasdvbt;
 #endif
 
+#if defined(ADB5800)
+extern int ptihal;
+#endif 
+
 int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
 					 struct DeviceContext_s *DeviceContext)
 {
@@ -120,7 +124,7 @@ int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
 	   if playback via SWTS is activated. Otherwise playback would
 	   unnecessarily waste a buffer (might lead to loss of a second
 	   recording). */
-#if defined(ADB_BOX) || defined(SAGEMCOM88) || defined(SPARK7162)
+#if defined(SAGEMCOM88) || defined(SPARK7162)
 	if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
 			(pSession->source <= DMX_SOURCE_FRONT3)) ||
 			((pSession->source == DMX_SOURCE_DVR0) && swts)))
@@ -290,7 +294,7 @@ int stpti_stop_feed(struct dvb_demux_feed *dvbdmxfeed,
 	}
 	/* PTI was only started if the source is one of two frontends or
 	   if playback via SWTS was activated. */
-#if defined(ADB_BOX) || defined(SAGEMCOM88) || defined(SPARK7162)
+#if defined(SAGEMCOM88) || defined(SPARK7162)
 	if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
 			(pSession->source <= DMX_SOURCE_FRONT3)) ||
 			((pSession->source == DMX_SOURCE_DVR0) && swts)))
@@ -371,7 +375,7 @@ static int convert_source(const dmx_source_t source)
 	switch (source)
 	{
 		case DMX_SOURCE_FRONT0:
-#if defined(UFS910) || defined(OCTAGON1008) || defined(UFS912) || defined(ADB_BOX) || defined(SPARK) || defined(SPARK7162) || defined(SAGEMCOM88)
+#if defined(UFS910) || defined(OCTAGON1008) || defined(UFS912) || defined(ADB_BOX) || defined(SPARK) || defined(SPARK7162) || defined(SAGEMCOM88) || defined(ADB5800)
 			tag = TSIN2;
 #else
 			tag = TSIN0;
@@ -392,7 +396,10 @@ static int convert_source(const dmx_source_t source)
 #elif defined(SAGEMCOM88)
 			tag = TSIN3;
 #elif defined(ARIVALINK200)
-                       tag = SWTS0;
+			tag = SWTS0;
+#elif defined(ADB5800)
+			if (ptihal == 0) tag = SWTS0;	// BSKA, BXZB - DVB-T USB
+			if (ptihal == 1) tag = TSIN0;	// BSLA, BZZB - second DVB-S2
 #else
 			tag = TSIN1;
 #endif
@@ -432,10 +439,18 @@ static int convert_source(const dmx_source_t source)
 		case DMX_SOURCE_DVR0:
 			tag = TSIN1;    //fake tsin for DVR (DVBT-USB at swts0)
 			break;
+#elif defined(ADB5800)
+		case DMX_SOURCE_FRONT2:
+			if (ptihal == 0) tag = TSIN0;	// BSKA, BXZB - fake tsin...
+			if (ptihal == 1) tag = SWTS0;	// BSLA, BZZB - DVB-T USB
+			break;
+		case DMX_SOURCE_DVR0:
+			tag = TSIN1;    //fake tsin for DVR (DVBT-USB at swts0)
+			break;
 #elif defined(ARIVALINK200)
-                case DMX_SOURCE_DVR0:
-                        tag = TSIN1;    //fake tsin for DVR (DVBT-USB at swts0)
-                        break;
+		case DMX_SOURCE_DVR0:
+			tag = TSIN1;    //fake tsin for DVR (DVBT-USB at swts0)
+			break;
 #else
 		case DMX_SOURCE_DVR0:
 			tag = SWTS0;
@@ -505,7 +520,7 @@ void ptiInit(struct DeviceContext_s *pContext)
 		 * Setup the transport stream merger based on the configuration
 		 */
 		stm_tsm_init(/*config */ 1);
-#if defined(ARIVALINK200) || defined(TF7700) || defined(UFS922) || defined(UFC960) || defined(FORTIS_HDBOX) || defined(HL101) || defined(VIP1_V2) || defined(VIP2_V1) || defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO_3000HD) || defined(ATEVIO7500) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(ADB_BOX) || defined(UFS913) || defined(SAGEMCOM88)
+#if defined(ARIVALINK200) || defined(TF7700) || defined(UFS922) || defined(UFC960) || defined(FORTIS_HDBOX) || defined(HL101) || defined(VIP1_V2) || defined(VIP2_V1) || defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO_3000HD) || defined(ATEVIO7500) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(ADB_BOX) || defined(UFS913) || defined(SAGEMCOM88) || defined(ADB5800)
 		pti_hal_init(&pti, &pContext->DvbDemux, demultiplexDvbPackets, 2);
 #elif defined(SPARK7162)
 		pti_hal_init(&pti, &pContext->DvbDemux, demultiplexDvbPackets, 3);
@@ -514,7 +529,7 @@ void ptiInit(struct DeviceContext_s *pContext)
 #endif
 #if defined(FORTIS_HDBOX) || defined(UFS912) || defined(SPARK) || defined(HS7110) || defined(HS7810A) || defined(HS7119) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(VITAMIN_HD5000) || defined(SAGEMCOM88)
 		stv090x_register_frontend(&pContext->DvbContext->DvbAdapter);
-#elif defined(HL101) || defined(VIP1_V2) || defined(VIP2_V1) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(ADB_BOX)
+#elif defined(HL101) || defined(VIP1_V2) || defined(VIP2_V1) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(ADB_BOX) || defined(ADB5800)
 		fe_core_register_frontend(&pContext->DvbContext->DvbAdapter);
 #elif defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO_3000HD)
 		socket_register_adapter(&pContext->DvbContext->DvbAdapter);
@@ -574,7 +589,7 @@ int SetSource(struct dmx_demux* demux, const dmx_source_t *src)
 	}
 #ifdef VERY_VERBOSE
 	printk("SetSource(%p, %d)\n", pDvbDemux, *src);
-#if defined(SAGEMCOM88) || defined(ADB_BOX) || defined(ARIVALINK200) || defined(SPARK7162)
+#if defined(SAGEMCOM88) || defined(ADB_BOX) || defined(ARIVALINK200) || defined(SPARK7162) || defined(ADB5800)
 	if (*src == DMX_SOURCE_FRONT0) printk("DMX_SOURCE_FRONT0\n");
 	else
 	if (*src == DMX_SOURCE_FRONT1) printk("DMX_SOURCE_FRONT1\n");

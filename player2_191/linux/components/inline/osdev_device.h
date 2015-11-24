@@ -620,7 +620,7 @@ static inline unsigned int      __getlw(unsigned long long a)
 
 // -----------------------------------------------------------------------------------------------
 
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(ADB5800)
 static inline int   OSDEV_ClaimSemaphore_trylock(OSDEV_Semaphore_t       *Semaphore)
 {
 	return down_trylock(*Semaphore);

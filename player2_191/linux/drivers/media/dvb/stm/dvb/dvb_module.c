@@ -94,9 +94,20 @@ int hasdvbt = 1;
 module_param(hasdvbt, int, 0444);
 MODULE_PARM_DESC(hasdvbt, "Internal DVB-T available\n");
 #endif
+
+#if defined(ADB5800)
+int tsinmode = 0;
+module_param(tsinmode, int, 0444);
+MODULE_PARM_DESC(tsinmode, "tsinmode 0=parallel(default) 1=serial\n");
+
+int ptihal = 0;
+module_param(ptihal, int, 0444);
+MODULE_PARM_DESC(ptihal, "ptihal 0=single(default) 1=twin\n");
 #endif
 
-#if defined(UFS910) || defined(ADB_BOX) || defined(SAGEMCOM88) || defined(ARIVALINK200)
+#endif
+
+#if defined(UFS910) || defined(ADB_BOX) || defined(SAGEMCOM88) || defined(ARIVALINK200) || defined(ADB5800)
 int reset_tsm = 0;
 module_param(reset_tsm, int, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(reset_tsm, "Reset the tsm when pti is idle? (default=0)\n");
