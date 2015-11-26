@@ -1516,8 +1516,8 @@ int proc_video_alpha_read(char *page, char **start, off_t off, int count,
 #ifdef VERY_VERBOSE
 	printk("%s\n", __FUNCTION__);
 #endif
-#if !defined(ADB_BOX) || defined(ADB5800)
-	struct stmfb_info *info = stmfb_get_fbinfo_ptr();
+#if !defined(ADB_BOX) && !defined(ADB5800)
+	struct stmfb_info* info = stmfb_get_fbinfo_ptr();
 	struct stmfbio_var_screeninfo_ex varEx;
 	stmfb_get_var_ex(&varEx, info);
 	//len = sprintf(page, "%d\n", varEx.opacity);
