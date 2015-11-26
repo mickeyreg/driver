@@ -212,7 +212,7 @@ int procfile_read(char *buffer, char **buffer_location,
 	if (offset > 0) {
 		ret  = 0;
 	} else {
-#if !defined(ADB_BOX) || defined(ADB5800)
+#if !defined(ADB_BOX) && !defined(ADB5800)
 		ret = sprintf(buffer, "%d\n", boxtype);
 #endif
 #if defined(ADB_BOX)
@@ -257,7 +257,7 @@ int __init boxtype_init(void)
 
 	if(boxtype == 0)
 	{
-#if !defined(ADB_BOX) || defined(ADB5800)
+#if !defined(ADB_BOX) && !defined(ADB5800)
 	  /* no platform data found, assume ufs910 */
 	  boxtype = (STPIO_GET_PIN(PIO_PORT(4),5) << 1) | STPIO_GET_PIN(PIO_PORT(4), 4);
 #endif
