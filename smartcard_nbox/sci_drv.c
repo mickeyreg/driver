@@ -65,7 +65,6 @@
 #endif
 
 static char *type = "bska";
-static char *mode_sci0 = "nbox";//tda8004
 static char *mode_sci1 = "nbox";//tda8004
 
 static char reset0_on=0;
@@ -2528,9 +2527,7 @@ static int __init sci_module_init(void)
     printk("reset0_on=%d reset0_off=%d\n",reset0_on,reset0_off);
     printk("reset1_on=%d reset1_off=%d\n",reset1_on,reset1_off);
 
-    if (!strcmp("nbox", mode_sci0)) {vcc0_on=1;vcc0_off=0;}
-    else if (!strcmp("tda8004", mode_sci0)) {vcc0_on=0;vcc0_off=1;}
-    else {vcc0_on=1;vcc0_off=0;}//default nbox
+    vcc0_on=1;vcc0_off=0;
     if (!strcmp("nbox", mode_sci1)) {vcc1_on=1;vcc1_off=0;}
     else if (!strcmp("tda8004", mode_sci1)) {vcc1_on=0;vcc1_off=1;}
     else {vcc1_on=1;vcc1_off=0;}//default nbox
@@ -2625,9 +2622,6 @@ MODULE_PARM_DESC(debug, "Turn on/off SmartCard debugging (default:on)");
 
 module_param(type,charp,0);
 MODULE_PARM_DESC(type, "box type (bska, bsla, bxzb)");
-
-module_param(mode_sci0,charp,0);
-MODULE_PARM_DESC(mode_sci0, "mode SCI0 (tda8004,nbox)");
 
 module_param(mode_sci1,charp,0);
 MODULE_PARM_DESC(mode_sci1, "mode SCI1 (tda8004,nbox)");
