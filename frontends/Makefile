@@ -381,8 +381,13 @@ fe-core-bsla-objs +=        adb_dual/stb6100.o
 fe-core-bsla-objs +=        adb_dual/core.o
 obj-m += fe-core-bsla.o 
 # dual stv0900 (BZZB)
-fe-core-bzzb-objs += adb_stv900/stv090x.o
-fe-core-bzzb-objs += adb_stv900/stb6100.o
-fe-core-bzzb-objs += adb_stv900/core.o
+fe-core-bzzb-objs +=        adb_stv900/stv090x.o
+fe-core-bzzb-objs +=        adb_stv900/stb6100.o
+fe-core-bzzb-objs +=        adb_stv900/core.o
 obj-m += fe-core-bzzb.o
+# single stv0297 (BVXA - DVB-C)
+fe-core-bvxa-objs +=        adb_mmp/mt2060.o
+fe-core-bvxa-objs +=        adb_mmp/stv0297.o
+fe-core-bvxa-objs +=        adb_mmp/core.o
+obj-m += fe-core-bvxa.o
 endif
