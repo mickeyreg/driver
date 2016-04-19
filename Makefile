@@ -321,6 +321,7 @@ obj-y += cec/
 obj-y += smartcard/
 obj-y += sagemcomtype/
 obj-y += fan_sagemcom88/
+obj-y += cec_sagemcom88/
 obj-y += dvbt/as102/
 obj-y += dvbt/siano/
 endif
