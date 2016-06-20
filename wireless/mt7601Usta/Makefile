@@ -8,10 +8,10 @@ RT28xx_MODE                       = STA
 CHIPSET                           = 7601U
 OSABL                             = NO
 
-# HAS_ATE                           = y
-# HAS_QA_SUPPORT                    = y
-# HAS_LED_CONTROL_SUPPORT           = y
-# HAS_KTHREAD_SUPPORT               = y
+HAS_ATE                           = y
+HAS_QA_SUPPORT                    = y
+HAS_LED_CONTROL_SUPPORT           = y
+HAS_KTHREAD_SUPPORT               = y
 
 HAS_WPA_SUPPLICANT                = y
 HAS_NATIVE_WPA_SUPPLICANT_SUPPORT = y
@@ -52,7 +52,7 @@ endif
 ifeq ($(HAS_ATE),y)
 WFLAGS += -DRALINK_ATE
 WFLAGS += -DCONFIG_RT2880_ATE_CMD_NEW
-WFLAGS += -I$(RT28xx_DIR)/ate/include
+WFLAGS += -I$(src)/ate/include
 ifeq ($(HAS_QA_SUPPORT),y)
 WFLAGS += -DRALINK_QA
 endif
