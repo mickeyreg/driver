@@ -79,6 +79,7 @@ extern void fe_core_register_frontend(struct dvb_adapter *dvb_adap);
 #elif defined(FORTIS_HDBOX) \
  || defined(UFS912) \
  || defined(SPARK) \
+ || defined(ADB2850) \
  || defined(HS7110) \
  || defined(HS7810A) \
  || defined(HS7420) \
@@ -425,6 +426,8 @@ static int convert_source(const dmx_source_t source)
 			}
 #elif defined(UFS913)
 			tag = 3;//TSIN2; //TSIN3
+#elif defined(ADB2850)
+			tag = TSIN2;
 #elif defined(SAGEMCOM88)
 			tag = TSIN3;
 #elif defined(ARIVALINK200)
@@ -507,6 +510,7 @@ void ptiInit(struct DeviceContext_s *pContext)
  || defined(UFS912) \
  || defined(UFS913) \
  || defined(SPARK) \
+ || defined(ADB2850) \
  || defined(SPARK7162) \
  || defined(ATEVIO7500) \
  || defined(HS7110) \
@@ -566,7 +570,31 @@ void ptiInit(struct DeviceContext_s *pContext)
 		 * Setup the transport stream merger based on the configuration
 		 */
 		stm_tsm_init(/*config */ 1);
-#if defined(ARIVALINK200) || defined(TF7700) || defined(UFS922) || defined(UFC960) || defined(FORTIS_HDBOX) || defined(HL101) || defined(VIP1_V2) || defined(VIP2_V1) || defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO_3000HD) || defined(ATEVIO7500) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(ADB_BOX) || defined(UFS913) || defined(SAGEMCOM88) || defined(ADB5800)
+#if defined(ARIVALINK200) \
+ || defined(TF7700) \
+ || defined(UFS922) \
+ || defined(UFC960) \
+ || defined(FORTIS_HDBOX) \
+ || defined(HL101) \
+ || defined(VIP1_V2) \
+ || defined(VIP2_V1) \
+ || defined(CUBEREVO) \
+ || defined(CUBEREVO_MINI2) \
+ || defined(CUBEREVO_MINI) \
+ || defined(CUBEREVO_250HD) \
+ || defined(CUBEREVO_2000HD) \
+ || defined(CUBEREVO_9500HD) \
+ || defined(CUBEREVO_MINI_FTA) \
+ || defined(CUBEREVO_3000HD) \
+ || defined(ATEVIO7500) \
+ || defined(IPBOX9900) \
+ || defined(IPBOX99) \
+ || defined(IPBOX55) \
+ || defined(ADB_BOX) \
+ || defined(UFS913) \
+ || defined(SAGEMCOM88) \
+ || defined(ADB5800) \
+ || defined(ADB2850)
 		pti_hal_init(&pti, &pContext->DvbDemux, demultiplexDvbPackets, 2);
 #elif defined(SPARK7162)
 		pti_hal_init(&pti, &pContext->DvbDemux, demultiplexDvbPackets, 3);
@@ -576,6 +604,7 @@ void ptiInit(struct DeviceContext_s *pContext)
 #if defined(FORTIS_HDBOX) \
  || defined(UFS912) \
  || defined(SPARK) \
+ || defined(ADB2850) \
  || defined(HS7110) \
  || defined(HS7420) \
  || defined(HS7429) \
@@ -665,7 +694,8 @@ int SetSource(struct dmx_demux* demux, const dmx_source_t *src)
  || defined(ADB_BOX) \
  || defined(ARIVALINK200) \
  || defined(SPARK7162) \
- || defined(ADB5800)
+ || defined(ADB5800) \
+ || defined(ADB2850)
 	if (*src == DMX_SOURCE_FRONT0)
 	{
 		printk("DMX_SOURCE_FRONT0\n");

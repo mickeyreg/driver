@@ -144,7 +144,7 @@ obj-y += vitamin_hd5000/
 endif
 
 ifdef SAGEMCOM88
-obj-y += front_led/
+obj-y += front_lfd/
 obj-y += front_vfd/
 endif
 
@@ -157,4 +157,8 @@ endif
 ifdef ADB5800
 obj-y += front_bska/
 obj-y += front_bsla/
+endif
+
+ifdef ADB2850
+obj-y += front_led/
 endif

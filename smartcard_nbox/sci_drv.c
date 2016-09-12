@@ -58,7 +58,7 @@
 
 #if defined(CONFIG_CPU_SUBTYPE_STB7100) || defined(CONFIG_CPU_SUBTYPE_STX7100) || defined(CONFIG_SH_ST_MB442) || defined(CONFIG_SH_ST_MB411)
 #include "sci_7100.h"
-#elif defined(CONFIG_CPU_SUBTYPE_STX7111) || defined(UFS912) || defined(SPARK) || defined(HS7810A)
+#elif defined(CONFIG_CPU_SUBTYPE_STX7111) || defined(UFS912) || defined(SPARK) || defined(ADB2850) || defined(HS7810A)
 #include "sci_7111.h"
 #elif defined(CONFIG_CPU_SUBTYPE_STX7105) || defined(ATEVIO7500)
 #include "sci_7105.h"
@@ -1139,7 +1139,7 @@ static int SCI_SetClockSource(SCI_CONTROL_BLOCK *sci)
 	U32 reg_address = 0;
 	U32 val = 0;
 
-#if defined(CONFIG_CPU_SUBTYPE_STB7100) || defined(CONFIG_CPU_SUBTYPE_STX7100) || defined(CONFIG_SH_ST_MB442) || defined(CONFIG_SH_ST_MB411) || defined(CONFIG_CPU_SUBTYPE_STX7111) || defined(HS7810A) || defined(UFS912) || defined(SPARK) 
+#if defined(CONFIG_CPU_SUBTYPE_STB7100) || defined(CONFIG_CPU_SUBTYPE_STX7100) || defined(CONFIG_SH_ST_MB442) || defined(CONFIG_SH_ST_MB411) || defined(CONFIG_CPU_SUBTYPE_STX7111) || defined(HS7810A) || defined(UFS912) || defined(SPARK) || defined(ADB2850)
 	reg_address = (U32)checked_ioremap(SYS_CFG_BASE_ADDRESS+SYS_CFG7, 4);
 	if(!reg_address)
 		return 0;
@@ -1155,7 +1155,7 @@ static int SCI_SetClockSource(SCI_CONTROL_BLOCK *sci)
 
 	iounmap((void *)reg_address);
 
-#if defined(CONFIG_CPU_SUBTYPE_STX7111) || defined(UFS912) || defined(SPARK) || defined(HS7810A)
+#if defined(CONFIG_CPU_SUBTYPE_STX7111) || defined(UFS912) || defined(SPARK) || defined(ADB2850) || defined(HS7810A)
 	reg_address = (U32)checked_ioremap(SYS_CFG_BASE_ADDRESS+SYS_CFG5, 4);
 	if(!reg_address)
 		return 0;
@@ -2519,6 +2519,7 @@ static int __init sci_module_init(void)
 
     sci_driver_init = 0;
 
+#if defined(ADB5800)
     if (!strcmp("bska", type)) {reset0_on=0;reset0_off=1;reset1_on=0;reset1_off=1;}
     else if (!strcmp("bsla", type)) {reset0_on=0;reset0_off=1;reset1_on=0;reset1_off=1;}
     else if (!strcmp("bxzb", type)) {reset0_on=1;reset0_off=0;reset1_on=1;reset1_off=0;}//invert reset
@@ -2532,6 +2533,13 @@ static int __init sci_module_init(void)
     else {vcc1_on=1;vcc1_off=0;}//default nbox
     printk("vcc0_on=%d vcc0_off=%d\n",vcc0_on,vcc0_off);
     printk("vcc1_on=%d vcc1_off=%d\n",vcc1_on,vcc1_off);
+#elif defined(ADB2850)
+    reset0_on=1;reset0_off=0;reset1_on=1;reset1_off=0;//invert reset
+    vcc0_on=1;vcc0_off=0;
+#else
+    reset0_on=0;reset0_off=1;reset1_on=0;reset1_off=1;
+    vcc0_on=1;vcc0_off=0;
+#endif
 
     if (sci_init() == SCI_ERROR_OK)
     {
@@ -2557,7 +2565,7 @@ static int __init sci_module_init(void)
             device_create(sci_module_class, NULL, MKDEV(MAJOR_NUM, MINOR_START + i), NULL, "sci%d", i);
 #else
             class_device_create(sci_module_class, NULL, dev, NULL, "sci%d", i);
-#endif            
+#endif
     }
     else
     {

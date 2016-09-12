@@ -43,6 +43,7 @@ unsigned long TSM_NUM_1394_ALT_OUT;
 #if defined(UFS912) \
  || defined(UFS913) \
  || defined(SPARK) \
+ || defined(ADB2850) \
  || defined(SPARK7162) \
  || defined(ATEVIO7500) \
  || defined(HS7110) \
@@ -127,6 +128,7 @@ unsigned long TSM_NUM_1394_ALT_OUT;
 #if defined(UFS912) \
  || defined(UFS913) \
  || defined(SPARK) \
+ || defined(ADB2850) \
  || defined(SPARK7162) \
  || defined(ATEVIO7500) \
  || defined(HS7110) \
@@ -625,6 +627,7 @@ void stm_tsm_init(int use_cimax)
 #endif
 #if defined(VIP2_V1) \
  || defined(SPARK) \
+ || defined(ADB2850) \
  || defined(SPARK7162) \
  || defined(IPBOX99) \
  || defined(IPBOX55) \
@@ -1447,6 +1450,7 @@ void stm_tsm_init(int use_cimax)
 		else
 		{
 #if defined(SPARK) \
+ || defined(ADB2850) \
  || defined(SPARK7162) \
  || defined(HS7110) \
  || defined(HS7119) \
@@ -1459,6 +1463,11 @@ void stm_tsm_init(int use_cimax)
 			tsm_io = ioremap(/* config->tsm_base_address */ 0x19242000, 0x1000);
 #endif
 		}
+
+#if defined(ADB2850)
+	ctrl_outl(0, tsm_io + SYS_CFG0);
+#endif
+
 /* >>> DVBT-USB
   j00zek: when tuner hangs starting streaming from DVB-T USB, something wrong is with this section */ 
 #if defined(SAGEMCOM88) || defined(SPARK7162)
@@ -1596,6 +1605,9 @@ void stm_tsm_init(int use_cimax)
 				options = options + STM_SERIAL_NOT_PARALLEL;
 				printk("TsinMode = Serial *st-merger*\n\t");
 			}
+#elif defined(ADB2850)
+			int options = n * 0x10000;
+			if (n==2) {options = options + STM_SERIAL_NOT_PARALLEL;} //serial dla dvbt adb2850
 #else
 			int options = n * 0x10000;
 #endif // alt

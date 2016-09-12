@@ -397,7 +397,7 @@ fe-core-bsla-objs +=        adb_dual/stb0899_algo.o
 fe-core-bsla-objs +=        adb_dual/stb0899_drv.o
 fe-core-bsla-objs +=        adb_dual/stb6100.o
 fe-core-bsla-objs +=        adb_dual/core.o
-obj-m += fe-core-bsla.o 
+obj-m += fe-core-bsla.o
 # dual stv0900 (BZZB)
 fe-core-bzzb-objs +=        adb_stv900/stv090x.o
 fe-core-bzzb-objs +=        adb_stv900/stb6100.o
@@ -408,4 +408,21 @@ fe-core-bvxa-objs +=        adb_mmp/mt2060.o
 fe-core-bvxa-objs +=        adb_mmp/stv0297.o
 fe-core-bvxa-objs +=        adb_mmp/core.o
 obj-m += fe-core-bvxa.o
+endif
+
+ifdef ADB2850
+fe_core-objs += adb_28xx/dibx000_common.o
+fe_core-objs += adb_28xx/dib0070.o
+fe_core-objs += adb_28xx/dib7000p.o
+
+#fe_core-objs += adb_28xx/mxl111sf-gpio.o
+fe_core-objs += adb_28xx/mxl111sf-phy.o
+fe_core-objs += adb_28xx/mxl111sf-demod.o
+fe_core-objs += adb_28xx/mxl111sf-tuner.o
+fe_core-objs += adb_28xx/mxl111sf.o
+
+fe_core-objs += adb_28xx/stv090x.o
+fe_core-objs += adb_28xx/stv6110x.o
+fe_core-objs += adb_28xx/core.o
+obj-m += fe_core.o
 endif

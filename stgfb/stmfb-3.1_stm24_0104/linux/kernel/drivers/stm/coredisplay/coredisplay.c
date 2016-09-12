@@ -33,6 +33,9 @@
 #include <linux/stm/stmcoredisplay.h>
 #include <linux/stm/stmcorehdmi.h>
 
+int box_type = 0;
+module_param(box_type, int, 0444);
+MODULE_PARM_DESC(box_type, "boxtype 0=adb2850(default) 1=adb2849");
 
 static struct stmcore_display_pipeline_data *platform_data;
 static int nr_platform_devices;

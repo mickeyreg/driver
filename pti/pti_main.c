@@ -760,6 +760,7 @@ void pti_hal_init ( struct stpti *pti , struct dvb_demux* demux, void (*_demulti
 #if defined(UFS912) \
  || defined(UFS913) \
  || defined(SPARK) \
+ || defined(ADB2850) \
  || defined(SPARK7162) \
  || defined(ATEVIO7500) \
  || defined(HS7110) \
