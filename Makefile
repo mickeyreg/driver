@@ -148,6 +148,12 @@ endif
 ifdef ADB5800
 CCFLAGSY += -DADB5800
 endif
+ifdef ADB2850
+CCFLAGSY += -DADB2850
+endif
+ifdef DSI87
+CCFLAGSY += -DDSI87
+endif
 ifneq (,$(findstring 2.6.3,$(KERNELVERSION)))
 ccflags-y += $(CCFLAGSY)
 else
@@ -359,6 +365,14 @@ obj-y += adb_box_fan/
 obj-y += cec_adb_box/
 obj-y += dvbt/as102/
 obj-y += dvbt/siano/
+endif
+
+ifdef ADB2850
+#obj-y += cec/
+obj-y += smartcard_nbox/
+obj-y += cec_adb28xx/
+#obj-y += dvbt/as102/
+#obj-y += dvbt/siano/
 endif
 
 endif

@@ -36,7 +36,7 @@
 #include <linux/proc_fs.h>
 #include <linux/platform_device.h>
 
-#if defined(ADB_BOX) || defined(ADB5800)
+#if defined(ADB_BOX) || defined(ADB5800) || defined(ADB2850)
 #include <linux/i2c.h>
 #include <linux/delay.h>
 #endif
@@ -142,7 +142,7 @@ int isl6405(void)	//dla bsla
     if (b==128)
     {
         b=0; //DCL na 0
-	ret=i2c_transfer(i2c_adap, &msg_w, 1);
+        ret=i2c_transfer(i2c_adap, &msg_w, 1);
         if (ret=!1) {printk("Error W:ISL6405 SR1\n"); return 2;}
         ret=i2c_transfer(i2c_adap, &msg_r, 1);
         if (ret=!1) {printk("Error R:ISL6405 SR1\n"); return 2;}
@@ -152,7 +152,26 @@ int isl6405(void)	//dla bsla
     else
     return 1;
 }
+#elif defined(ADB2850)
+#define ADB2850 1
+#define ADB2849 2
+#define I2C_BUS 1
+
+int lnb_boxtype(void)
+{
+    int ret;
+    unsigned char buf;
+
+    struct i2c_msg msg = {.addr = 0x0a, I2C_M_RD, .buf = &buf, .len = 1 };
+
+    struct i2c_adapter *i2c_adap = i2c_get_adapter (I2C_BUS);
+    ret=i2c_transfer(i2c_adap, &msg, 1);
+    return ret;
+}
 #endif
+
+
+
 /************************************************************************
 *
 * Unfortunately there is no generic mechanism to unambiguously determine
@@ -218,7 +237,7 @@ int procfile_read(char *buffer, char **buffer_location, off_t offset, int buffer
 	}
 	else
 	{
-#if !defined(ADB_BOX) && !defined(ADB5800)
+#if !defined(ADB_BOX) && !defined(ADB5800) && !defined(ADB2850)
 		ret = sprintf(buffer, "%d\n", boxtype);
 #endif
 #if defined(ADB_BOX)
@@ -241,6 +260,12 @@ int procfile_read(char *buffer, char **buffer_location, off_t offset, int buffer
 		if (boxtype==4) ret = sprintf(buffer, "BZZB\n");
 		else
 		ret = sprintf(buffer, "UNKOWN\n");
+#elif defined(ADB2850)
+		if (boxtype==ADB2850) ret = sprintf(buffer, "ADB2850\n");
+		else
+		if (boxtype==ADB2849) ret = sprintf(buffer, "ADB2849\n");
+		else
+		ret = sprintf(buffer, "UNKOWN\n");
 #endif
 	}
 	return ret;
@@ -248,7 +273,7 @@ int procfile_read(char *buffer, char **buffer_location, off_t offset, int buffer
 
 int __init boxtype_init(void)
 {
-#if defined(ADB_BOX) || defined(ADB5800)
+#if defined(ADB_BOX) || defined(ADB5800) || defined(ADB2850)
 	int ret;
 #endif
 	dprintk("[BOXTYPE] initializing ...\n");
@@ -263,7 +288,7 @@ int __init boxtype_init(void)
 
 	if (boxtype == 0)
 	{
-#if !defined(ADB_BOX) && !defined(ADB5800)
+#if !defined(ADB_BOX) && !defined(ADB5800) && !defined(ADB2850)
 	/* no platform data found, assume ufs910 */
 	boxtype = (STPIO_GET_PIN(PIO_PORT(4),5) << 1) | STPIO_GET_PIN(PIO_PORT(4), 4);
 #endif
@@ -290,6 +315,16 @@ int __init boxtype_init(void)
 				boxtype=4;	//BZZB
 			    }
 		}
+#elif defined(ADB2850)
+		ret=lnb_boxtype();
+		dprintk("ret1 = %d\n", ret);//ret 1=ok
+		if (ret!=1) boxtype=ADB2849;else boxtype=ADB2850;
+
+		if (boxtype==ADB2850) dprintk("ADB2850\n");
+		else
+		if (boxtype==ADB2849) dprintk("ADB2849\n");
+		else
+		dprintk("UNKOWN\n");
 #endif
 #if defined(ADB_BOX)
 		if (boxtype==1) dprintk("bska\n");

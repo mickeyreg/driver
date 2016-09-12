@@ -23,6 +23,11 @@
 #include "stmhdmiregs.h"
 #include "stmiframemanager.h"
 
+#if defined(ADB2850)
+//freebox
+extern int box_type;
+#endif
+
 CSTmHDMI::CSTmHDMI(CDisplayDevice             *pDev,
                    stm_hdmi_hardware_version_t hwver,
                    ULONG                       ulHDMIOffset,
@@ -142,8 +147,10 @@ bool CSTmHDMI::Create(void)
      * it will not trigger a hotplug interrupt.
      */
     ULONG hotplugstate = (ReadHDMIReg(STM_HDMI_STA) & STM_HDMI_STA_HOT_PLUG);
-#if	defined(SPARK) || defined(SPARK7162)
+#if defined(SPARK) || defined(SPARK7162)
     if(hotplugstate == 0)
+#elif defined(ADB2850)
+    if(((box_type==0)&&(hotplugstate == 0))||((box_type==1)&&(hotplugstate != 0)))
 #else
     if(hotplugstate != 0)
 #endif
@@ -1000,8 +1007,10 @@ bool CSTmHDMI::HandleInterrupts()
        * If the device has just been plugged in, flag that we now need to
        * start the output.
        */
-#if	defined(SPARK) || defined(SPARK7162)
+#if defined(SPARK) || defined(SPARK7162)
       if(hotplugstate == 0)
+#elif defined(ADB2850)
+      if(((box_type==0)&&(hotplugstate == 0))||((box_type==1)&&(hotplugstate != 0)))
 #else
       if(hotplugstate != 0)
 #endif
@@ -1013,8 +1022,10 @@ bool CSTmHDMI::HandleInterrupts()
        * We may either be waiting for the output to be started, or already started,
        * so _only_ change the state if the device has now been disconnected.
        */
-#if	defined(SPARK) || defined(SPARK7162)
+#if defined(SPARK) || defined(SPARK7162)
       if(hotplugstate != 0)
+#elif defined(ADB2850)
+      if(((box_type==0)&&(hotplugstate != 0))||((box_type==1)&&(hotplugstate == 0)))
 #else
       if(hotplugstate == 0)
 #endif
