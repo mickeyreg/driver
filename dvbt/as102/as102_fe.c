@@ -202,7 +202,8 @@ static int as102_fe_read_snr(struct dvb_frontend *fe, u16 *snr)
 	if (dev == NULL)
 		return -ENODEV;
 
-	*snr = dev->demod_stats.mer;
+	//*snr = dev->demod_stats.mer;
+	*snr = 65535-(24*dev->demod_stats.mer);
 	//snr_ = dev->demod_stats.mer * 50;
 	//*snr = snr_;
 	//dprintk(debug,"SNR:%d\n",snr_);
