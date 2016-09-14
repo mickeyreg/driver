@@ -107,7 +107,7 @@ MODULE_PARM_DESC(ptihal, "ptihal 0=single(default) 1=twin\n");
 
 #endif
 
-#if defined(UFS910) || defined(ADB_BOX) || defined(SAGEMCOM88) || defined(ARIVALINK200) || defined(ADB5800)
+#if defined(UFS910) || defined(ADB_BOX) || defined(SAGEMCOM88) || defined(ARIVALINK200) || defined(ADB5800) || defined(ADB2850)
 int reset_tsm = 0;
 module_param(reset_tsm, int, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(reset_tsm, "Reset the tsm when pti is idle? (default=0)\n");

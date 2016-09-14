@@ -431,7 +431,7 @@ static int convert_source(const dmx_source_t source)
 #elif defined(SAGEMCOM88)
 			tag = TSIN3;
 #elif defined(ARIVALINK200)
-			tag = SWTS0;
+			tag = SWTS0; // DVB-T USB
 #elif defined(ADB5800)
 			if (ptihal == 0) tag = SWTS0;	// BSKA, BXZB - DVB-T USB
 			if (ptihal == 1) tag = TSIN0;	// BSLA, BZZB - second DVB-S2
@@ -478,6 +478,13 @@ static int convert_source(const dmx_source_t source)
 		case DMX_SOURCE_FRONT2:
 			if (ptihal == 0) tag = TSIN0;	// BSKA, BXZB - fake tsin...
 			if (ptihal == 1) tag = SWTS0;	// BSLA, BZZB - DVB-T USB
+			break;
+		case DMX_SOURCE_DVR0:
+			tag = TSIN1;    //fake tsin for DVR (DVBT-USB at swts0)
+			break;
+#elif defined(ADB2850)
+		case DMX_SOURCE_FRONT2:
+			tag = SWTS0;	// DVB-T USB
 			break;
 		case DMX_SOURCE_DVR0:
 			tag = TSIN1;    //fake tsin for DVR (DVBT-USB at swts0)

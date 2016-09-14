@@ -86,7 +86,7 @@ extern int reset_tsm;
     To make it working, dvbt driver needs to be modded too. See dvbt/as102 for reference
     Step1: enabling feeding from player2, needs changes in driver, see more comments in dvbt/as102
     Step2 in st-merger*/ 
-#if defined(ADB_BOX) || defined(ARIVALINK200) || defined(SAGEMCOM88) || defined(SPARK7162) || defined(ADB5800)
+#if defined(ADB_BOX) || defined(ARIVALINK200) || defined(SAGEMCOM88) || defined(SPARK7162) || defined(ADB5800) || defined(ADB2850)
 int (*StartFeed_)(struct dvb_demux_feed* Feed);
 int (*StopFeed_)(struct dvb_demux_feed* Feed);
 
@@ -189,6 +189,9 @@ int StartFeed(struct dvb_demux_feed *Feed)
 		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StartFeed_ != NULL))
 			StartFeed_(Feed);
 	}
+#elif defined(ADB2850)
+	if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StartFeed_ != NULL))
+		StartFeed_(Feed);
 #endif
 /* <<< DVBT USB */ 
 #ifdef __TDT__
@@ -415,6 +418,9 @@ int StopFeed(struct dvb_demux_feed *Feed)
 		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StopFeed_ != NULL))
 			StopFeed_(Feed);
 	}
+#elif defined(ADB2850)
+	if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StopFeed_ != NULL))
+		StopFeed_(Feed);
 #endif
 /* <<< DVBT USB */ 
 	switch (Feed->type)

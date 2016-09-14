@@ -772,14 +772,18 @@ struct ProcStructure_s e2Proc[] =
 	{cProcEntry, "stb/misc/fan"                                                     , NULL, NULL, NULL, NULL, ""},
 #endif
 
-#if defined(ADB_BOX) || defined(SAGEMCOM88) || defined(ADB5800)
+#if defined(ADB_BOX) || defined(ADB5800)
 	{cProcDir  , "stb/fan"                                                          , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/hdmi/cec"                                                     , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/fan/fan_ctrl"                                                 , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/video/switch_type"                                            , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/video/switch"                                                 , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/video/switch_choices"                                         , NULL, NULL, NULL, NULL, ""},
-#elif defined(ARIVALINK200)
+#elif defined(SAGEMCOM88)
+	{cProcDir  , "stb/fan"                                                          , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/hdmi/cec"                                                     , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/fan/fan_ctrl"                                                 , NULL, NULL, NULL, NULL, ""},
+#elif defined(ARIVALINK200) || defined(ADB2850)
         {cProcEntry, "stb/hdmi/cec"                                                     , NULL, NULL, NULL, NULL, ""},
 #endif
 

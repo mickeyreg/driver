@@ -1464,10 +1464,6 @@ void stm_tsm_init(int use_cimax)
 #endif
 		}
 
-#if defined(ADB2850)
-	ctrl_outl(0, tsm_io + SYS_CFG0);
-#endif
-
 /* >>> DVBT-USB
   j00zek: when tuner hangs starting streaming from DVB-T USB, something wrong is with this section */ 
 #if defined(SAGEMCOM88) || defined(SPARK7162)
@@ -1475,7 +1471,7 @@ void stm_tsm_init(int use_cimax)
 		// STi7105
 		// 0-3 - 4xTS
 		// 4-6 - 3xSWTS
-		ctrl_outl(TSM_SWTS_REQ_TRIG(128 / 16) | 0x12, tsm_io + TSM_SWTS_CFG(0));
+		ctrl_outl(TSM_SWTS_REQ_TRIG(128 / 16) | 0x12, tsm_io + TSM_SWTS_CFG(0));	// 12 not 0x12 @freebox...
 		ctrl_outl(0x8000000, tsm_io + SWTS_CFG(1));
 		ctrl_outl(0x8000000, tsm_io + SWTS_CFG(2));
 		tsm_handle.tsm_io = ioremap(TSMergerBaseAddress, 0x1000);
@@ -1519,6 +1515,13 @@ void stm_tsm_init(int use_cimax)
 			dma_params_req(&tsm_handle.swts_params[n],tsm_handle.fdma_req);
 		}
 		*/
+#elif defined(ADB2850)
+		ctrl_outl(0, tsm_io + SYS_CFG0);
+		printk(">>Init st7111 DVBT-USB\n");
+		tsm_handle.tsm_io = ioremap(TSMergerBaseAddress, 0x1000);
+		tsm_handle.tsm_swts = (unsigned long)ioremap (0x1A300000, 0x1000);
+		//--> ?? tsm_handle.tsm_swts = (unsigned long)ioremap (SWTS_BASE_ADDRESS, 0x1000);
+		ctrl_outl( TSM_SWTS_REQ_TRIG(128/16) | 12, tsm_io + TSM_SWTS_CFG(0));
 #endif
 /* <<< DVBT-USB */
 #ifdef LOAD_TSM_DATA
