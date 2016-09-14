@@ -54,13 +54,14 @@ struct proc_dir_entry *BT_Proc_File;
 #define I2C_ADDR_STB0899_1	(0xd0 >> 1)	//d0=0x68 d2=69
 #define I2C_ADDR_STB0899_2	(0xd2 >> 1)	//d0=0x68 d2=69
 #define I2C_ADDR_STV090x	(0xd0 >> 1)	//d0=0x68 d2=69
+#define I2C_ADDR_STV0297	(0x38 >> 1)
 #define I2C_BUS 0
 
 #define STB0899_NCOARSE		0xf1b3
 #define STB0899_DEV_ID		0xf000
 #define STV090x_MID		0xf100
 
-static int _read_reg_boxtype(unsigned int reg,unsigned char nr)
+static int _read_reg_boxtype(unsigned int reg, unsigned char nr)
 {
 	int ret;
 
@@ -98,7 +99,7 @@ int stb0899_read_reg_boxtype(unsigned int reg,unsigned char nr)
 {
 	int result;
 
-	result = _read_reg_boxtype(reg,nr);
+	result = _read_reg_boxtype(reg, nr);
 	/*
 	 * Bug ID 9:
 	 * access to 0xf2xx/0xf6xx
@@ -106,7 +107,7 @@ int stb0899_read_reg_boxtype(unsigned int reg,unsigned char nr)
 	 */
 	if ((reg != 0xf2ff) && (reg != 0xf6ff) &&
 	    (((reg & 0xff00) == 0xf200) || ((reg & 0xff00) == 0xf600)))
-		_read_reg_boxtype((reg | 0x00ff),nr);
+		_read_reg_boxtype((reg | 0x00ff), nr);
 
 	return result;
 }
@@ -123,6 +124,40 @@ int stv6412_boxtype(void)
     return ret;
 }
 
+
+int stv0297_boxtype(void) 
+{ 
+	int ret;
+
+	dprintk("stv0297 read reg = %x\n", 0);
+
+	u8 b0[] = { 0 >> 8, 0 & 0xff };
+	u8 buf;
+
+	struct i2c_msg msg[] = {
+		{
+			.addr	= I2C_ADDR_STV0297,
+			.flags	= 0,
+			.buf	= b0,
+			.len	= 1
+		},{
+			.addr	= I2C_ADDR_STV0297,
+			.flags	= I2C_M_RD,
+			.buf	= &buf,
+			.len	= 1
+		}
+	};
+
+
+	struct i2c_adapter *i2c_adap = i2c_get_adapter (I2C_BUS);
+
+	ret = i2c_transfer(i2c_adap, msg, 2);
+	if (ret != 2) {
+		return -1;
+	}
+
+	return (unsigned int) buf;
+}
 
 int isl6405(void)	//dla bsla
 {
@@ -245,6 +280,8 @@ int procfile_read(char *buffer, char **buffer_location, off_t offset, int buffer
 		else
 		if (boxtype==4) ret = sprintf(buffer, "bzzb\n");
 		else
+		if (boxtype==5) ret = sprintf(buffer, "bvxa\n");
+		else
 		ret = sprintf(buffer, "UNKOWN\n");
 #elif defined(ADB5800)
 		if (boxtype==1) ret = sprintf(buffer, "BSKA\n");
@@ -254,6 +291,8 @@ int procfile_read(char *buffer, char **buffer_location, off_t offset, int buffer
 		if (boxtype==3) ret = sprintf(buffer, "BXZB\n");
 		else
 		if (boxtype==4) ret = sprintf(buffer, "BZZB\n");
+		else
+		if (boxtype==5) ret = sprintf(buffer, "BVXA\n");
 		else
 		ret = sprintf(buffer, "UNKOWN\n");
 #elif defined(ADB2850)
@@ -290,31 +329,40 @@ int __init boxtype_init(void)
 #endif
 #if defined(ADB_BOX) || defined(ADB5800)
 		ret=stv6412_boxtype();
-		dprintk("ret1 = %d\n", ret);//ret 1=ok
+		dprintk("ret stv6412 = %d\n", ret);//ret=1 -> ok
 		if (ret!=1) boxtype=3;	//BXZB
 		else
 		{
+		    ret = stv0297_boxtype();
+		    dprintk("ret stv0297 = %d\n", ret);//ret=9 -> ok
+		    if (ret==0x9) boxtype=5; 	//BVXA
+		    else
+		    {
 			//jezeli uda sie przeczytac rejestar z drugiego demodulatora to jest to BSLA
 			ret = stb0899_read_reg_boxtype(STB0899_NCOARSE,I2C_ADDR_STB0899_2);	//read DIV from demodulator
-			dprintk("ret2 = %d\n", ret);
+			dprintk("ret stb0899_2 = %d\n", ret);
 			if (ret!=-1)
 			    boxtype=2;	//BSLA
 			else 
-			    {
+			{
 			    //sprawdzamy czy to jest stb0899 czy stv090x
 			    //czytamy chipid i rev
 			    ret = stb0899_read_reg_boxtype(STB0899_DEV_ID,I2C_ADDR_STB0899_1);
-			    dprintk("ret3 = %d\n", ret);	//stb0899 = 130
+			    dprintk("ret stb0899_1 = %d\n", ret);	//stb0899 = 130
 			    if(ret>0x30)
 				boxtype=1;	//BSKA
 			    else
 				boxtype=4;	//BZZB
-			    }
+			}
+		    }
 		}
 #elif defined(ADB2850)
 		ret=lnb_boxtype();
 		dprintk("ret1 = %d\n", ret);//ret 1=ok
-		if (ret!=1) boxtype=ADB2849;else boxtype=ADB2850;
+		if (ret!=1) 
+		    boxtype=ADB2849; 
+		else 
+		    boxtype=ADB2850;
 
 		if (boxtype==ADB2850) dprintk("ADB2850\n");
 		else
@@ -331,6 +379,8 @@ int __init boxtype_init(void)
 		else
 		if (boxtype==4) dprintk("bzzb\n");
 		else
+		if (boxtype==5) dprintk("bvxa\n");
+		else
 		dprintk("UNKOWN\n");
 #elif defined(ADB5800)
 		if (boxtype==1) dprintk("BSKA\n");
@@ -340,6 +390,8 @@ int __init boxtype_init(void)
 		if (boxtype==3) dprintk("BXZB\n");
 		else
 		if (boxtype==4) dprintk("BZZB\n");
+		else
+		if (boxtype==5) dprintk("BVXA\n");
 		else
 		dprintk("UNKOWN\n");
 #endif
