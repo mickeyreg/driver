@@ -121,7 +121,8 @@ MODULE_PARM_DESC(ptihal, "ptihal 0=single(default) 1=twin\n");
  || defined(IPBOX99) \
  || defined(IPBOX55) \
  || defined(HL101) \
- || defined(ADB5800)
+ || defined(ADB5800) \
+ || defined(ADB2850)
 int reset_tsm = 0;
 module_param(reset_tsm, int, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(reset_tsm, "Reset the tsm when pti is idle? (default=0)\n");

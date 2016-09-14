@@ -231,7 +231,7 @@ static int dib7070_set_param_override(struct dvb_frontend *fe,
 				      struct dvb_frontend_parameters *fep)
 {
 	struct dib0700_adapter_state *state = fe->demodulator_priv;
-	
+
 	u16 offset;
 	u8 band = BAND_OF_FREQUENCY(fep->frequency/1000);
 	switch (band) {
@@ -566,7 +566,7 @@ int __init stv090x_init(void)
 }
 
 static void __exit stv090x_exit(void) 
-{  
+{
    printk("stv090x unloaded\n");
 }
 

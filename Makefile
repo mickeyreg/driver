@@ -368,11 +368,11 @@ obj-y += dvbt/siano/
 endif
 
 ifdef ADB2850
-#obj-y += cec/
+obj-y += cec/
 obj-y += smartcard_nbox/
 obj-y += cec_adb28xx/
-#obj-y += dvbt/as102/
-#obj-y += dvbt/siano/
+obj-y += dvbt/as102/
+obj-y += dvbt/siano/
 endif
 
 endif

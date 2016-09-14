@@ -676,7 +676,7 @@ static int dib0070_release(struct dvb_frontend *fe)
 
 static const struct dvb_tuner_ops dib0070_ops = {
 	.info = {
-		 .name = "DiBcom DiB0070",
+		 .name = "   DiBcom DiB0070",
 		 .frequency_min = 45000000,
 		 .frequency_max = 860000000,
 		 .frequency_step = 1000,
@@ -687,8 +687,8 @@ static const struct dvb_tuner_ops dib0070_ops = {
 	.sleep = dib0070_sleep,
 	.set_params = dib0070_tune,
 
-//      .get_frequency = dib0070_get_frequency,
-//      .get_bandwidth = dib0070_get_bandwidth
+//	.get_frequency = dib0070_get_frequency,
+//	.get_bandwidth = dib0070_get_bandwidth
 };
 
 struct dvb_frontend *dib0070_attach(struct dvb_frontend *fe, struct i2c_adapter *i2c, struct dib0070_config *cfg)
@@ -711,7 +711,7 @@ struct dvb_frontend *dib0070_attach(struct dvb_frontend *fe, struct i2c_adapter 
 	fe->tuner_priv = state;
 	return fe;
 
- free_mem:
+free_mem:
 	kfree(state);
 	fe->tuner_priv = NULL;
 	return NULL;

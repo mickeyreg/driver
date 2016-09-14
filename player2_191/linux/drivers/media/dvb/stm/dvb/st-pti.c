@@ -516,8 +516,12 @@ static int convert_source(const dmx_source_t source)
 				tag = SWTS0;
 			}
 			break;
+#elif defined(ADB2850)
+		case DMX_SOURCE_FRONT2:
+			tag = SWTS0;	// DVB-T USB
+			break;
 		case DMX_SOURCE_DVR0:
-			tag = TSIN2;
+			tag = TSIN1;    //fake tsin for DVR (DVBT-USB at swts0)
 			break;
 #else
 		case DMX_SOURCE_DVR0:

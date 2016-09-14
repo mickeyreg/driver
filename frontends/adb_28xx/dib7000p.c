@@ -1249,19 +1249,19 @@ static int dib7000p_read_snr(struct dvb_frontend* fe, u16 *snr)
 		signal_exp -= 0x40;
 
 	if (signal_mant != 0)
-		result = intlog10(2) * 10 * signal_exp + 10 *
-			intlog10(signal_mant);
+		result = intlog10(2) * 10 * signal_exp + 10 * intlog10(signal_mant);
 	else
 		result = intlog10(2) * 10 * signal_exp - 100;
 
 	if (noise_mant != 0)
-		result -= intlog10(2) * 10 * noise_exp + 10 *
-			intlog10(noise_mant);
+		result -= intlog10(2) * 10 * noise_exp + 10 * intlog10(noise_mant);
 	else
 		result -= intlog10(2) * 10 * noise_exp - 100;
 
 //	*snr = result / ((1 << 24) / 10);
-	*snr = result / ((1 << 24) / 1000);
+//	*snr = result / ((1 << 24) / 1000);
+//	*snr = result;
+	*snr = result / ((1 << 24) / 10) * 204;
 	printk("dib7000p_read_snr:%d\n",*snr);
 	return 0;
 }
@@ -1441,8 +1441,8 @@ struct dvb_frontend * dib7000p_attach(struct i2c_adapter *i2c_adap, u8 i2c_addr,
 
 	demod                   = &st->demod;
 	demod->demodulator_priv = st;
-	//memcpy(&st->demod.ops, &dib7000p_ops, sizeof(struct dvb_frontend_ops));
-	st->demod.ops = dib7000p_ops;
+	memcpy(&st->demod.ops, &dib7000p_ops, sizeof(struct dvb_frontend_ops));
+	//st->demod.ops = dib7000p_ops;
 
 	if (dib7000p_identify(st) != 0)
 		goto error;

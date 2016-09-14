@@ -96,7 +96,8 @@ extern int reset_tsm;
  || defined(IPBOX99) \
  || defined(IPBOX55) \
  || defined(HL101) \
- || defined(ADB5800)
+ || defined(ADB5800) \
+ || defined(ADB2850)
 int (*StartFeed_)(struct dvb_demux_feed *Feed);
 int (*StopFeed_)(struct dvb_demux_feed *Feed);
 
@@ -218,6 +219,9 @@ int StartFeed(struct dvb_demux_feed *Feed)
 		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StartFeed_ != NULL))
 			StartFeed_(Feed);
 	}
+#elif defined(ADB2850)
+	if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StartFeed_ != NULL))
+		StartFeed_(Feed);
 #endif
 	/* <<< DVBT USB */
 #ifdef __TDT__
@@ -459,6 +463,9 @@ int StopFeed(struct dvb_demux_feed *Feed)
 		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StopFeed_ != NULL))
 			StopFeed_(Feed);
 	}
+#elif defined(ADB2850)
+	if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StopFeed_ != NULL))
+		StopFeed_(Feed);
 #endif
 	/* <<< DVBT USB */
 	switch (Feed->type)
