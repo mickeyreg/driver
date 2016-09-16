@@ -129,6 +129,17 @@ int StartFeed(struct dvb_demux_feed *Feed)
 #endif
 	DVB_DEBUG("(demux%d)\n", Context->Id);
 	/* either numRunningFeeds == 0 and reset_tsm == 1 or reset_tsm > 1 */
+
+//#ifdef VERY_VERBOSE
+
+//if(Context->pPtiSession->source==DMX_SOURCE_FRONT0) printk("Context->DMX_SOURCE_FRONT0\n");
+//if(Context->pPtiSession->source==DMX_SOURCE_FRONT1) printk("Context->DMX_SOURCE_FRONT1\n");
+//if(Context->pPtiSession->source==DMX_SOURCE_FRONT2) printk("Context->DMX_SOURCE_FRONT2\n");
+//if(Context->pPtiSession->source==DMX_SOURCE_FRONT3) printk("Context->DMX_SOURCE_FRONT3\n");
+//if(Context->pPtiSession->source==DMX_SOURCE_DVR0)   printk("Context->DMX_SOURCE_DVR0\n");
+
+//#endif
+
 #ifdef __TDT__
 	// fix recoding freezer on tuner0 and demux1/2 or tuner1 and demux0/2 or tuner2 and demux0/1
 	for (i = 0; i < DVB_MAX_DEVICES_PER_ADAPTER; i++)
