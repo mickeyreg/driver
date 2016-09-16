@@ -240,7 +240,8 @@ static const char *fdma_cap_hb[] = { STM_DMA_CAP_HIGH_BW, NULL };
  || defined(IPBOX99) \
  || defined(IPBOX55) \
  || defined(HL101) \
- || defined(ADB5800)
+ || defined(ADB5800) \
+ || defined(ADB2850)
 //injecting stream from DVB-T USB driver to SWTS
 void extern_inject_data(u32 *data, off_t size)
 {
@@ -1555,10 +1556,18 @@ else
 #elif defined(ADB2850)
 		ctrl_outl(0, tsm_io + SYS_CFG0);
 		printk(">>Init st7111 DVBT-USB\n");
+
+		//tsm_handle.tsm_io = ioremap(TSMergerBaseAddress, 0x1000);
+		//tsm_handle.tsm_swts = (unsigned long)ioremap (0x1A300000, 0x1000);
+		////tsm_handle.tsm_swts = (unsigned long)ioremap (SWTS_BASE_ADDRESS, 0x1000);
+		//ctrl_outl( TSM_SWTS_REQ_TRIG(128/16) | 12, tsm_io + TSM_SWTS_CFG(0));
+
+		ctrl_outl( TSM_SWTS_REQ_TRIG(128/16) | 0x12, tsm_io + TSM_SWTS_CFG(0));
+		ctrl_outl(0x8000000, tsm_io + SWTS_CFG(1));
+		ctrl_outl(0x8000000, tsm_io + SWTS_CFG(2));
+
 		tsm_handle.tsm_io = ioremap(TSMergerBaseAddress, 0x1000);
-		tsm_handle.tsm_swts = (unsigned long)ioremap (0x1A300000, 0x1000);
-		//--> ?? tsm_handle.tsm_swts = (unsigned long)ioremap (SWTS_BASE_ADDRESS, 0x1000);
-		ctrl_outl( TSM_SWTS_REQ_TRIG(128/16) | 12, tsm_io + TSM_SWTS_CFG(0));
+		tsm_handle.tsm_swts = (unsigned long)ioremap (SWTS_BASE_ADDRESS, 0x1000);
 #endif
 		/* <<< DVBT-USB */
 #ifdef LOAD_TSM_DATA
@@ -1652,7 +1661,8 @@ else
 			}
 #elif defined(ADB2850)
 			int options = n * 0x10000;
-			if (n==2) {options = options + STM_SERIAL_NOT_PARALLEL;} //serial dla dvbt adb2850
+			if (n == 2) {options = options + STM_SERIAL_NOT_PARALLEL;} //serial dla dvbt adb2850
+			if (n == 3) {options = options + STM_SERIAL_NOT_PARALLEL;} //serial dla dvbt-usb adb2850
 #else
 			int options = n * 0x10000;
 #endif // alt

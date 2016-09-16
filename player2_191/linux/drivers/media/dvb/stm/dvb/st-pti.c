@@ -47,6 +47,8 @@
 
 //__TDT__: many modifications in this file
 
+//#define VERY_VERBOSE 1
+
 #if defined(ADB_BOX)
 int TsinMode;
 static char *TSIS_mode = "parallel";
