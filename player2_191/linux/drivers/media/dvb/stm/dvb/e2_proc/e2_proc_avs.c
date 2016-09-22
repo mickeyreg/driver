@@ -106,6 +106,7 @@ static int current_input = ENCODER;
  || defined(TF7700) \
  || defined(UFS912) \
  || defined(ADB2850) \
+ || defined(DSI87) \
  || defined(UFS922) \
  || defined(UFC960) \
  || defined(HL101) \
@@ -184,6 +185,7 @@ int proc_avs_0_volume_write(struct file* file, const char __user* buf, unsigned 
  || defined(TF7700) \
  || defined(UFS912) \
  || defined(ADB2850) \
+ || defined(DSI87) \
  || defined(UFS922) \
  || defined(UFC960) \
  || defined(HL101) \

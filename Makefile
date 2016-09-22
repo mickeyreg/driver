@@ -372,4 +372,12 @@ obj-y += dvbt/as102/
 obj-y += dvbt/siano/
 endif
 
+ifdef DSI87
+obj-y += cec/
+obj-y += smartcard_nbox/
+obj-y += cec_adb28xx/
+obj-y += dvbt/as102/
+obj-y += dvbt/siano/
+endif
+
 endif

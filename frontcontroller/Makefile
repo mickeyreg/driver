@@ -162,3 +162,7 @@ endif
 ifdef ADB2850
 obj-y += front_led/
 endif
+
+ifdef DSI87
+obj-y += front_lfd/
+endif

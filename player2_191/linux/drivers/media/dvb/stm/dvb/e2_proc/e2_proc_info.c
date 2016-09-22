@@ -61,6 +61,8 @@ int proc_info_model_read(char *page, char **start, off_t off, int count, int *eo
 	len = sprintf(page, "nbox\n");
 #elif defined(ADB2850)
 	len = sprintf(page, "adb2850\n");
+#elif defined(DSI87)
+	len = sprintf(page, "dsi87\n");
 #else
 	len = sprintf(page, "unknown\n");
 #endif

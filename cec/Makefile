@@ -71,5 +71,9 @@ ifdef ADB2850
 EXTRA_CFLAGS += -DSTx7111
 endif
 
+ifdef DSI87
+EXTRA_CFLAGS += -DSTx7111
+endif
+
 endif
 
