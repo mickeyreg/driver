@@ -82,6 +82,7 @@ extern void fe_core_register_frontend(struct dvb_adapter *dvb_adap);
  || defined(UFS912) \
  || defined(SPARK) \
  || defined(ADB2850) \
+ || defined(DSI87) \
  || defined(HS7110) \
  || defined(HS7810A) \
  || defined(HS7420) \
@@ -442,8 +443,9 @@ static int convert_source(const dmx_source_t source)
 			tag = TSIN3;
 #elif defined(ARIVALINK200) \
  || defined(IPBOX55) \
- || defined(HL101)
-			tag = SWTS0;
+ || defined(HL101) \
+ || defined(DSI87)
+			tag = SWTS0;	// DVB-T USB
 #elif defined(IPBOX9900) \
  || defined(IPBOX99)
 			if (twinhead == 1)
@@ -550,6 +552,7 @@ void ptiInit(struct DeviceContext_s *pContext)
  || defined(UFS913) \
  || defined(SPARK) \
  || defined(ADB2850) \
+ || defined(DSI87) \
  || defined(SPARK7162) \
  || defined(ATEVIO7500) \
  || defined(HS7110) \
@@ -633,6 +636,7 @@ void ptiInit(struct DeviceContext_s *pContext)
  || defined(UFS913) \
  || defined(SAGEMCOM88) \
  || defined(ADB5800) \
+ || defined(DSI87) \
  || defined(ADB2850)
 		pti_hal_init(&pti, &pContext->DvbDemux, demultiplexDvbPackets, 2);
 #elif defined(SPARK7162)
@@ -644,6 +648,7 @@ void ptiInit(struct DeviceContext_s *pContext)
  || defined(UFS912) \
  || defined(SPARK) \
  || defined(ADB2850) \
+ || defined(DSI87) \
  || defined(HS7110) \
  || defined(HS7420) \
  || defined(HS7429) \
@@ -738,6 +743,7 @@ int SetSource(struct dmx_demux *demux, const dmx_source_t *src)
  || defined(IPBOX55) \
  || defined(HL101) \
  || defined(ADB5800) \
+ || defined(DSI87) \
  || defined(ADB2850)
 	if (*src == DMX_SOURCE_FRONT0)
 	{

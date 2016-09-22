@@ -473,6 +473,13 @@ int __init avs_init(void)
 	int res, err;
 	const char *name;
 
+#if defined(DSI87)
+	struct i2c_msg msg;
+	u8 buf[2];
+	static struct i2c_adapter* adapter = NULL;
+	int ret;
+#endif
+
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
 	err = avs_detect(NULL, -1, &name);
 #else
@@ -487,6 +494,41 @@ int __init avs_init(void)
 	}
 
 	dprintk("[AVS]: A/V switch handling for %s\n", name);
+
+
+#if defined(DSI87)
+    /*
+        struct i2c_msg msg_ = {.addr = 0x4a, I2C_M_RD, .buf = &buf, .len = 1 };
+	struct i2c_adapter *i2c_adap = i2c_get_adapter (0);
+	int ret;
+	ret=i2c_transfer(i2c_adap, &msg_, 1);
+	if(ret!=1)
+	{
+	    printk ("AVS_MAX9597: Read I2C Error\n");
+	}
+    */
+#if 0
+	printk ("AVS_MAX9597: Init\n");
+	adapter = i2c_get_adapter (0);
+
+	msg.addr = 0x4a;
+	msg.flags = 0;
+	msg.buf = &buf;
+	msg.len = 2;
+
+	//MAX9597
+	buf[0]=0x0d;	//Register 0Dh: Output Enable
+	buf[1]=0xff;	//all out on
+    
+	//dprintk (100, "write lnb: %s:  write 0x%02x to \n", __FUNCTION__, data);
+	//printk ("!!!!!!!! LNB write=0x%02x >> adr=0x%02x\n",data,msg.addr);
+
+	if ((ret=i2c_transfer(adapter, &msg, 1)) != 1)
+	{
+		printk ("AVS_MAX9597: Write I2C Error = %x\n",ret);
+	}
+#endif
+#endif
 
 #if !defined(CUBEREVO_MINI_FTA) && !defined(CUBEREVO_250HD)
 	if ((devType != FAKE_AVS) && (devType != AVS_NONE) && (devType != VIP2_AVS)

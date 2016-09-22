@@ -327,6 +327,8 @@ static int info_model_read(char *page, char **start, off_t off, int count, int *
 	int len = sprintf(page, "nbox\n");
 #elif defined(ADB2850)
 	int len = sprintf(page, "adb2850\n");
+#elif defined(DSI87)
+	int len = sprintf(page, "dsi87\n");
 #else
 	int len = sprintf(page, "unknown\n");
 #endif
@@ -375,6 +377,7 @@ static int info_chipset_read(char *page, char **start, off_t off, int count, int
  || defined(ATEMIO530) \
  || defined(SPARK) \
  || defined(ADB2850) \
+ || defined(DSI87) \
  || defined(VITAMIN_HD5000)
 	int len = sprintf(page, "STi7111\n");
 #elif defined(SPARK7162)
@@ -764,6 +767,7 @@ struct ProcStructure_s e2Proc[] =
  || defined(HS7819) \
  || defined(SPARK) \
  || defined(ADB2850) \
+ || defined(DSI87) \
  || defined(SPARK7162) \
  || defined(SAGEMCOM88) \
  || defined(VITAMIN_HD5000)
@@ -801,7 +805,7 @@ struct ProcStructure_s e2Proc[] =
 	{cProcDir  , "stb/fan"                                                          , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/hdmi/cec"                                                     , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/fan/fan_ctrl"                                                 , NULL, NULL, NULL, NULL, ""},
-#elif defined(ARIVALINK200) || defined(ADB2850)
+#elif defined(ARIVALINK200) || defined(ADB2850) || defined(DSI87)
         {cProcEntry, "stb/hdmi/cec"                                                     , NULL, NULL, NULL, NULL, ""},
 #endif
 

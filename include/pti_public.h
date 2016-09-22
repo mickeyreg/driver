@@ -43,19 +43,22 @@ typedef enum
 /* source */
 typedef enum
 {
-	TSIN0 = 0,
-	TSIN1,
-	TSIN2,
-#if defined(SAGEMCOM88) || defined(SPARK7162)
-// 4-TS and 3-SWTS in STi7105
-	TSIN3,
-	SWTS0,
-	SWTS1,
-	SWTS2,
-#else
-	SWTS0,
+    TSIN0 = 0,
+    TSIN1,
+    TSIN2,
+#if defined(SAGEMCOM88) || defined(SPARK7162) || defined(ADB2850)
+// 3-TS and 1-SWTS at STi7100
+// 4-TS and 3-SWTS at STi7105
+// 3-TS and 3-SWTS at STi7109
+// 4-TS and 3-SWTS at STi7111
+    TSIN3,
 #endif
-	TS_NOTAGS = 0x80
+    SWTS0,  
+#if defined(SAGEMCOM88) || defined(SPARK7162) || defined(ADB2850)
+    SWTS1,
+    SWTS2,
+#endif
+    TS_NOTAGS = 0x80
 } tInputSource;
 
 struct stpti

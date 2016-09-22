@@ -97,7 +97,8 @@ extern int reset_tsm;
  || defined(IPBOX55) \
  || defined(HL101) \
  || defined(ADB5800) \
- || defined(ADB2850)
+ || defined(ADB2850) \
+ || defined(DSI87)
 int (*StartFeed_)(struct dvb_demux_feed *Feed);
 int (*StopFeed_)(struct dvb_demux_feed *Feed);
 
@@ -190,7 +191,8 @@ int StartFeed(struct dvb_demux_feed *Feed)
 	}
 #elif defined(ARIVALINK200) \
  || defined(IPBOX55) \
- || defined(HL101)
+ || defined(HL101) \
+ || defined(DSI87)
 	if ((Context->pPtiSession->source == DMX_SOURCE_FRONT1) && (StartFeed_ != NULL))
 		StartFeed_(Feed);
 #elif defined(SPARK7162)
@@ -434,7 +436,8 @@ int StopFeed(struct dvb_demux_feed *Feed)
 	}
 #elif defined(ARIVALINK200) \
  || defined(IPBOX55) \
- || defined(HL101)
+ || defined(HL101) \
+ || defined(DSI87)
 	if ((Context->pPtiSession->source == DMX_SOURCE_FRONT1) && (StopFeed_ != NULL))
 		StopFeed_(Feed);
 #elif defined(SPARK7162)

@@ -32,6 +32,7 @@
 #if (defined(UFS912) \
  || defined(SPARK) \
  || defined(ADB2850) \
+ || defined(DSI87) \
  || defined(HS7110) \
  || defined(HS7119) \
  || defined(HS7420) \
@@ -84,7 +85,7 @@ static struct stmcore_display_pipeline_data platform_data[] = {
  || defined(ATEMIO520) \
  || defined(ATEMIO530)
     .hdmi_i2c_adapter_id      = 2,
-#elif defined(ADB2850)
+#elif defined(DSI87)
     .hdmi_i2c_adapter_id      = 1,
 #else
     .hdmi_i2c_adapter_id      = 0,
@@ -95,6 +96,7 @@ static struct stmcore_display_pipeline_data platform_data[] = {
 #if (defined(UFS912) \
  || defined(SPARK) \
  || defined(ADB2850) \
+ || defined(DSI87) \
  || defined(HS7110) \
  || defined(HS7119) \
  || defined(HS7810A) \

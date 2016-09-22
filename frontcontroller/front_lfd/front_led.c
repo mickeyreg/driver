@@ -21,11 +21,14 @@
 #include <linux/stpio.h>
 #endif
 
+#if defined(SAGEMCOM88) 
+
 #define LED1 stm_gpio(14, 1)
 #define LED2 stm_gpio(14, 2)
 
 //#define KEY_L_	stm_gpio(10, 2)
 //#define KEY_R_	stm_gpio(10, 3)
+
 
 #define KEY_R__	stm_gpio(6, 6)
 #define KEY_L__	stm_gpio(6, 7)
@@ -35,6 +38,13 @@ static char *button_driver_name = "SagemCom88 frontpanel buttons";
 static struct input_dev *button_dev;
 static struct workqueue_struct *wq;
 static int bad_polling = 1;
+
+#elif defined(DSI87)
+
+#define LED1 stm_gpio(2, 6)
+#define LED2 stm_gpio(2, 7)
+
+#endif
 
 static const unsigned char rom[128] =
 {
@@ -197,7 +207,7 @@ static jasnosc = 1;
 #define DBG(fmt, args...) if ( paramDebug > 0 ) printk(KERN_INFO "[front_led]::" fmt "\n", ## args )
 #define ERR(fmt, args...) printk(KERN_ERR "[front_led]::" fmt "\n", ## args )
 
-
+#if defined(SAGEMCOM88)
 
 #define BUTTON_FRONT
 
@@ -278,6 +288,8 @@ static void button_input_close(struct input_dev *dev)
 		DBG("[BTN] workqueue destroyed");
 	}
 }
+
+#endif
 
 #endif
 
@@ -520,15 +532,15 @@ static int vfd_ioctl( struct inode *inode, struct file *file, unsigned int cmd, 
     UHD88_set_brightness(vfddata.address );
     break;
   case VFDIOC_DISPLAYWRITEONOFF:
-//    copy_from_user( &vfddata, (void*)arg, sizeof( struct vfd_ioctl_data ) );
-//    UHD88_set_lights(vfddata.address );
+    // copy_from_user( &vfddata, (void*)arg, sizeof( struct vfd_ioctl_data ) );
+    // UHD88_set_lights(vfddata.address );
     break;
   case VFDIOC_ICONDISPLAYONOFF:
     copy_from_user(&vfddata, (void*)arg, sizeof( struct vfd_ioctl_data ) );
     UHD88_set_icon(vfddata.data,vfddata.length);
-	break;
+    break;
   case VFDIOC_DRIVERINIT:
-    //UHD88_setup();
+    // UHD88_setup();
     break;
   default:
     ERR("[%s] unknown ioctl %08x",__func__, cmd );
@@ -590,10 +602,16 @@ static struct file_operations vfd_fops = {
 static void __exit led_module_exit(void) 
 {
   DBG("LED SagemCom88 [%s]",__func__);
+
+#if defined(SAGEMCOM88)
+
 #ifdef BUTTON_FRONT
   if (button_dev)
     input_unregister_device(button_dev);
 #endif
+
+#endif
+
   unregister_chrdev( VFD_MAJOR, "vfd" );
 }
 
@@ -627,6 +645,8 @@ gpio_request(LED2, "LED2");
 if (LED2==NULL){ERR("Request LED2 failed. abort.");goto led_init_fail;}
 gpio_direction_output(LED2, STM_GPIO_DIRECTION_OUT);
 gpio_set_value(LED2, 1);//green
+
+#if defined(SAGEMCOM88)
 
 #ifdef BUTTON_FRONT
 
@@ -675,7 +695,15 @@ gpio_direction_input(KEY_PWR);
 		ERR("Request input_register_device. abort.");
 		goto led_init_fail;
 	}
+
 #endif
+
+#elif defined(DSI87)
+
+//Przyciski prawo-lewo PIO2/3 PIO2/4
+
+#endif
+
     //Clean display during init
     UHD88_WriteFront("    ",4);
     return 0;

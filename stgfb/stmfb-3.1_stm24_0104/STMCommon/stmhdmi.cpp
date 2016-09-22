@@ -23,7 +23,7 @@
 #include "stmhdmiregs.h"
 #include "stmiframemanager.h"
 
-#if defined(ADB2850)
+#if defined(ADB2850) || defined(DSI87)
 //freebox
 extern int box_type;
 #endif
@@ -149,7 +149,7 @@ bool CSTmHDMI::Create(void)
     ULONG hotplugstate = (ReadHDMIReg(STM_HDMI_STA) & STM_HDMI_STA_HOT_PLUG);
 #if defined(SPARK) || defined(SPARK7162)
     if(hotplugstate == 0)
-#elif defined(ADB2850)
+#elif defined(ADB2850) || defined(DSI87)
     if(((box_type==0)&&(hotplugstate == 0))||((box_type==1)&&(hotplugstate != 0)))
 #else
     if(hotplugstate != 0)
@@ -1009,7 +1009,7 @@ bool CSTmHDMI::HandleInterrupts()
        */
 #if defined(SPARK) || defined(SPARK7162)
       if(hotplugstate == 0)
-#elif defined(ADB2850)
+#elif defined(ADB2850) || defined(DSI87)
       if(((box_type==0)&&(hotplugstate == 0))||((box_type==1)&&(hotplugstate != 0)))
 #else
       if(hotplugstate != 0)
@@ -1024,7 +1024,7 @@ bool CSTmHDMI::HandleInterrupts()
        */
 #if defined(SPARK) || defined(SPARK7162)
       if(hotplugstate != 0)
-#elif defined(ADB2850)
+#elif defined(ADB2850) || defined(DSI87)
       if(((box_type==0)&&(hotplugstate != 0))||((box_type==1)&&(hotplugstate == 0)))
 #else
       if(hotplugstate == 0)

@@ -81,7 +81,8 @@ static int caInitialized = 0;
  && !defined (CUBEREVO_2000HD) \
  && !defined (SAGEMCOM88) \
  && !defined (ADB5800) \
- && !defined (ADB2850)
+ && !defined (ADB2850) \
+ && !defined (DSI87)
 extern int init_ci_controller(struct dvb_adapter *dvb_adap);
 #endif
 #endif
@@ -101,7 +102,8 @@ struct dvb_device *CaInit(struct DeviceContext_s *DeviceContext)
  && !defined (CUBEREVO_2000HD) \
  && !defined (SAGEMCOM88) \
  && !defined (ADB5800) \
- && !defined (ADB2850)
+ && !defined (ADB2850) \
+ && !defined (DSI87)
 		init_ci_controller(&DeviceContext->DvbContext->DvbAdapter);
 #endif
 		caInitialized = 1;

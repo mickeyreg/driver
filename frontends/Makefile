@@ -427,4 +427,17 @@ fe_core-objs += adb_28xx/stv090x.o
 fe_core-objs += adb_28xx/stv6110x.o
 fe_core-objs += adb_28xx/core.o
 obj-m += fe_core.o
+
+# just for test...
+#fe_fake_core-objs += dsi87/stv090x.o
+#fe_fake_core-objs += dsi87/stv6110x.o
+#fe_fake_core-objs += dsi87/core.o
+#obj-m += fe_fake_core.o
+endif
+
+ifdef DSI87
+fe_core-objs += dsi87/stv090x.o
+fe_core-objs += dsi87/stv6110x.o
+fe_core-objs += dsi87/core.o
+obj-m += fe_core.o
 endif

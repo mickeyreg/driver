@@ -16,6 +16,7 @@
  && (defined(UFS912) \
  || defined(SPARK) \
  || defined(ADB2850) \
+ || defined(DSI87) \
  || defined(HS7110) \
  || defined(HS7119) \
  || defined(HS7810A) \
