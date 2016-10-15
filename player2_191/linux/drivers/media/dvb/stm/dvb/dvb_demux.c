@@ -108,7 +108,7 @@ void extern_startfeed_init(int(*StartFeed)(struct dvb_demux_feed *Feed), int(*St
 	StopFeed_ = StopFeed;
 };
 /* Sagemcom88 has 2 models with and without internal DVB-T. In both, DVB-T USB should be configured different way */
-#if defined(SAGEMCOM88)
+#if defined(SAGEMCOM88) || defined(ADB2850)
 extern int hasdvbt;
 #endif
 

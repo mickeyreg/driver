@@ -130,7 +130,7 @@ extern void pti_hal_init(struct stpti *pti, struct dvb_demux *demux, void (*_dem
 
 extern int swts;
 
-#if defined(SAGEMCOM88)
+#if defined(SAGEMCOM88) || defined(ADB2850)
 extern int hasdvbt;
 #endif
 
@@ -438,7 +438,10 @@ static int convert_source(const dmx_source_t source)
 #elif defined(UFS913)
 			tag = 3;//TSIN2; //TSIN3
 #elif defined(ADB2850)
-			tag = TSIN2;
+			if (hasdvbt)
+				tag = TSIN2;
+			else
+				tag = SWTS0; // DVB-T USB on single tuner model
 #elif defined(SAGEMCOM88)
 			tag = TSIN3;
 #elif defined(ARIVALINK200) \
@@ -522,7 +525,10 @@ static int convert_source(const dmx_source_t source)
 			break;
 #elif defined(ADB2850)
 		case DMX_SOURCE_FRONT2:
-			tag = SWTS0;	// DVB-T USB
+			if (hasdvbt)
+				tag = SWTS0;	// DVB-T USB on ADB2850 with internal DVB-T
+			else
+				tag = TSIN2;	//fake tsin, not used
 			break;
 		case DMX_SOURCE_DVR0:
 			tag = TSIN1;    //fake tsin for DVR (DVBT-USB at swts0)
