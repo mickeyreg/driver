@@ -29,6 +29,8 @@
  *
  */
 
+#define debug =1
+
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/kernel.h>
@@ -190,18 +192,27 @@ int isl6405(void)	//dla bsla
 #elif defined(ADB2850)
 #define ADB2850 1
 #define ADB2849 2
+#define ADB2850b 3
 #define I2C_BUS 1
 
 int lnb_boxtype(void)
 {
     int ret;
     unsigned char buf;
-
+    
+    struct i2c_adapter *i2c_adap = i2c_get_adapter (I2C_BUS);
     struct i2c_msg msg = {.addr = 0x0a, I2C_M_RD, .buf = &buf, .len = 1 };
 
-    struct i2c_adapter *i2c_adap = i2c_get_adapter (I2C_BUS);
     ret=i2c_transfer(i2c_adap, &msg, 1);
-    return ret;
+    if (ret !=1) // ADB2949
+       return ret;
+
+    struct i2c_adapter *i2c_adap1 = i2c_get_adapter (0);
+    struct i2c_msg msg1 = {.addr = 0x3a, I2C_M_RD, .buf = &buf, .len = 1 };
+    ret=i2c_transfer(i2c_adap1, &msg1, 1);
+    if (ret ==1) // ADB2850b
+       return 2;
+    return 1;
 }
 #endif
 
@@ -300,6 +311,8 @@ int procfile_read(char *buffer, char **buffer_location, off_t offset, int buffer
 		else
 		if (boxtype==ADB2849) ret = sprintf(buffer, "ADB2849\n");
 		else
+		if (boxtype==ADB2850b) ret = sprintf(buffer, "ADB2850b\n");
+		else
 		ret = sprintf(buffer, "UNKOWN\n");
 #endif
 	}
@@ -359,16 +372,14 @@ int __init boxtype_init(void)
 #elif defined(ADB2850)
 		ret=lnb_boxtype();
 		dprintk("ret1 = %d\n", ret);//ret 1=ok
-		if (ret!=1) 
-		    boxtype=ADB2849; 
-		else 
-		    boxtype=ADB2850;
+		if (ret==1) boxtype = ADB2850; 
+		else if (ret ==2) boxtype = ADB2850b; 
+		else boxtype = ADB2849;
 
 		if (boxtype==ADB2850) dprintk("ADB2850\n");
-		else
-		if (boxtype==ADB2849) dprintk("ADB2849\n");
-		else
-		dprintk("UNKOWN\n");
+		else if (boxtype==ADB2849) dprintk("ADB2849\n");
+		else if (boxtype==ADB2850b) dprintk("ADB2850b\n");
+		else dprintk("UNKOWN\n");
 #endif
 #if defined(ADB_BOX)
 		if (boxtype==1) dprintk("bska\n");
@@ -421,6 +432,6 @@ void __exit boxtype_exit(void)
 module_init(boxtype_init);
 module_exit(boxtype_exit);
 
-MODULE_DESCRIPTION("Provides the type of an STB based on STb710x");
-MODULE_AUTHOR("Team Ducktales mod B4Team & freebox");
+MODULE_DESCRIPTION("Provides the type of an STB based on STb71xx");
+MODULE_AUTHOR("Team Ducktales mod B4Team & freebox & j00zek");
 MODULE_LICENSE("GPL");

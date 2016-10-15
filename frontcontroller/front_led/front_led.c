@@ -13,6 +13,7 @@
 
 #define LED1 stm_gpio(2, 1)
 #define LED2 stm_gpio(2, 2)
+#define LED3 stm_gpio(2, 3)
 
 struct vfd_ioctl_data {
     unsigned char address;
@@ -70,6 +71,16 @@ static void set_icon(unsigned char *kbuf, unsigned char len)
 	    break;
 	case 2:
 	    if(kbuf[4]==1) gpio_set_value(LED2, 1); else gpio_set_value(LED2, 0);
+	    break;
+	case 3:
+	    if(kbuf[4]==1) gpio_set_value(LED3, 1); else gpio_set_value(LED3, 0);
+	    break;
+	 //inverted blinking
+	case 11:
+	    if(kbuf[4]==1) gpio_set_value(LED1, 0); else gpio_set_value(LED1, 1);
+	    break;
+	case 12:
+	    if(kbuf[4]==1) gpio_set_value(LED2, 0); else gpio_set_value(LED2, 1);
 	    break;
 	default:
 	    ERR("icon unknown %d", kbuf[0]);
