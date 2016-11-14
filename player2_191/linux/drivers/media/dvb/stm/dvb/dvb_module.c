@@ -88,7 +88,7 @@ MODULE_PARM_DESC(highSR, "Start Driver with support for Symbol Rates 30000.\nIf 
 module_param(swts, int, 0444);
 MODULE_PARM_DESC(swts, "Do not route injected data through the tsm/pti.\n");
 
-#if defined(SAGEMCOM88) || defined(ADB2850)
+#if defined(SAGEMCOM88)
 int hasdvbt = 1;
 
 module_param(hasdvbt, int, 0444);

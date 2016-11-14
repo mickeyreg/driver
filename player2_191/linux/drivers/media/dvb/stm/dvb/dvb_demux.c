@@ -96,7 +96,7 @@ void extern_startfeed_init(int(*StartFeed)(struct dvb_demux_feed* Feed), int(*St
 	StopFeed_ = StopFeed;
 };
 /* Sagemcom88 has 2 models with and without internal DVB-T. In both, DVB-T USB should be configured different way */
-#if defined(SAGEMCOM88) || defined(ADB2850)
+#if defined(SAGEMCOM88)
 extern int hasdvbt;
 #endif
 
@@ -201,16 +201,8 @@ int StartFeed(struct dvb_demux_feed *Feed)
 			StartFeed_(Feed);
 	}
 #elif defined(ADB2850)
-	if (hasdvbt == 0) //model without internal DVB-T (adb2850b)
-	{
-		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT1) && (StartFeed_ != NULL))
-			StartFeed_(Feed);
-	}
-	else if (hasdvbt == 1) //model with internal DVB-T (adb2850/adb2849)
-	{
-		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StartFeed_ != NULL))
-			StartFeed_(Feed);
-	}
+	if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StartFeed_ != NULL))
+		StartFeed_(Feed);
 #endif
 /* <<< DVBT USB */ 
 #ifdef __TDT__
@@ -438,16 +430,8 @@ int StopFeed(struct dvb_demux_feed *Feed)
 			StopFeed_(Feed);
 	}
 #elif defined(ADB2850)
-	if (hasdvbt == 0) //model without internal DVB-T (adb2850b)
-	{
-		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT1) && (StopFeed_ != NULL))
-			StopFeed_(Feed);
-	}
-	else if (hasdvbt == 1) //model with internal DVB-T (adb2850/adb2849)
-	{
-		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StopFeed_ != NULL))
-			StopFeed_(Feed);
-	}
+	if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StopFeed_ != NULL))
+		StopFeed_(Feed);
 #endif
 /* <<< DVBT USB */ 
 	switch (Feed->type)
