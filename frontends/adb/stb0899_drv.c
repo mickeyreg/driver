@@ -2113,12 +2113,12 @@ static void stb0899_set_iterations(struct stb0899_state *state)
 //	reg = STB0899_READ_S2REG(STB0899_S2DEMOD, MAX_ITER);
 //	STB0899_SETFIELD_VAL(MAX_ITERATIONS, reg, iter_scale);
 //	stb0899_write_s2reg(state, STB0899_S2DEMOD, STB0899_BASE_MAX_ITER, STB0899_OFF0_MAX_ITER, reg);
-	stb0899_write_s2reg(state, STB0899_S2DEMOD, STB0899_BASE_MAX_ITER, STB0899_OFF0_MAX_ITER, iter_scale);
-	stb0899_write_s2reg(state, STB0899_S2DEMOD, STB0899_BASE_ITER_SCALE, STB0899_OFF0_ITER_SCALE, iter_scale);
+//	stb0899_write_s2reg(state, STB0899_S2DEMOD, STB0899_BASE_MAX_ITER, STB0899_OFF0_MAX_ITER, iter_scale);
+//	stb0899_write_s2reg(state, STB0899_S2DEMOD, STB0899_BASE_ITER_SCALE, STB0899_OFF0_ITER_SCALE, iter_scale);
 
 //	bug SR30000 - patch tBox Team
-//	stb0899_write_s2reg(state, STB0899_S2FEC, STB0899_BASE_MAX_ITER, STB0899_OFF0_MAX_ITER, iter_scale);
-//	stb0899_write_s2reg(state, STB0899_S2FEC, STB0899_BASE_ITER_SCALE, STB0899_OFF0_ITER_SCALE, iter_scale);
+	stb0899_write_s2reg(state, STB0899_S2FEC, STB0899_BASE_MAX_ITER, STB0899_OFF0_MAX_ITER, iter_scale);
+	stb0899_write_s2reg(state, STB0899_S2FEC, STB0899_BASE_ITER_SCALE, STB0899_OFF0_ITER_SCALE, iter_scale);
 }
 
 static int stb0899_set_property(struct dvb_frontend *fe, struct dtv_property *tvp)
