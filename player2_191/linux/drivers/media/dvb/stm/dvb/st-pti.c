@@ -480,9 +480,12 @@ static int convert_source(const dmx_source_t source)
 			if (hasdvbt == 0) tag = SWTS0; //DVBT-USB on esi88
 			break;
 		case DMX_SOURCE_FRONT3:
+			if (hasdvbt==1) tag = SWTS0;	//DVBT-USB on uhd88
+			if (hasdvbt==0) tag = SWTS1;	//fake tsin FRONT3 (DVBT-USB at swts0)
+			break;
 		case DMX_SOURCE_DVR0:
-			if (hasdvbt == 1) tag = SWTS0; //DVBT-USB on uhd88
-			if (hasdvbt == 0) tag = SWTS1; //fake tsin for DVR (DVBT-USB at swts0)
+			if (hasdvbt==1) tag = SWTS1;	//fake tsin for DVR (DVBT-USB at swts0)
+			if (hasdvbt==0) tag = SWTS2;	//fake tsin for DVR (DVBT-USB at swts0)
 			break;
 #elif defined(ADB_BOX)
 		case DMX_SOURCE_FRONT2:
@@ -768,7 +771,11 @@ int SetSource(struct dmx_demux *demux, const dmx_source_t *src)
 #endif
 #endif
 	pContext->pPtiSession->source = *src;
+#if defined(SAGEMCOM88) || defined(SPARK7162)
 	if (((*src >= DMX_SOURCE_FRONT0) && (*src <= DMX_SOURCE_FRONT3)) || (*src == DMX_SOURCE_DVR0))
+#else
+	if (((*src >= DMX_SOURCE_FRONT0) && (*src <= DMX_SOURCE_FRONT2)) || (*src == DMX_SOURCE_DVR0))
+#endif
 	{
 		pti_hal_set_source(pContext->pPtiSession->session, convert_source(*src));
 	}
