@@ -1,537 +1,603 @@
-ifeq ($(WIFI_MODE),)
-RT28xx_MODE = STA
+ifneq (,$(findstring 2.6.3,$(KERNELVERSION)))
+ccflags-y += $(CCFLAGSY)
 else
-RT28xx_MODE = $(WIFI_MODE)
+CFLAGS += $(CCFLAGSY)
 endif
 
-ifeq ($(TARGET),)
-TARGET = LINUX
-endif
+RT28xx_MODE                       = STA
+CHIPSET                           = 7610U
+OSABL                             = NO
 
-# CHIPSET
-# rt2860, rt2870, rt2880, rt2070, rt3070, rt3090, rt3572, rt3062, rt3562, rt3593, rt3573
-# rt3562(for rt3592), rt3050, rt3350, rt3352, rt5350, rt5370, rt5390, rt5572, rt5592, 
-# rt8592(for rt85592), mt7650e, mt7630e, mt7610e, mt7650u, mt7630u, mt7610u
+HAS_ATE                           = y
+HAS_QA_SUPPORT                    = y
+HAS_LED_CONTROL_SUPPORT           = y
+HAS_KTHREAD_SUPPORT               = y
 
-ifeq ($(CHIPSET),)
-CHIPSET = mt7650u mt7630u mt7610u
-endif
-
-MODULE = $(word 1, $(CHIPSET))
-
-#OS ABL - YES or NO
-OSABL = NO
-
-ifneq ($(TARGET),THREADX)
-#RT28xx_DIR = home directory of RT28xx source code
-RT28xx_DIR = $(shell pwd)
-endif
-
-include $(RT28xx_DIR)/os/linux/config.mk
-
-RTMP_SRC_DIR = $(RT28xx_DIR)/RT$(MODULE)
-
-#PLATFORM: Target platform
-PLATFORM = PC
-#PLATFORM = 5VT
-#PLATFORM = IKANOS_V160
-#PLATFORM = IKANOS_V180
-#PLATFORM = SIGMA
-#PLATFORM = SIGMA_8622
-#PLATFORM = INIC
-#PLATFORM = STAR
-#PLATFORM = IXP
-#PLATFORM = INF_TWINPASS
-#PLATFORM = INF_DANUBE
-#PLATFORM = INF_AR9
-#PLATFORM = INF_VR9
-#PLATFORM = BRCM_6358
-#PLATFORM = INF_AMAZON_SE
-#PLATFORM = CAVM_OCTEON
-#PLATFORM = CMPC
-#PLATFORM = RALINK_2880
-#PLATFORM = RALINK_3052
-#PLATFORM = SMDK
-#PLATFORM = RMI
-#PLATFORM = RMI_64
-#PLATFORM = KODAK_DC
-#PLATFORM = DM6446
-#PLATFORM = FREESCALE8377
-#PLATFORM = BL2348
-#PLATFORM = BL23570
-#PLATFORM = BLUBB
-#PLATFORM = BLPMP
-#PLATFORM = MT85XX
-#PLATFORM = MT53XX
-#PLATFORM = NXP_TV550
-#PLATFORM = MVL5
-#PLATFORM = RALINK_3352
-#PLATFORM = UBICOM_IPX8
-#PLATFORM = INTELP6
-
-#APSOC
-ifeq ($(MODULE),3050)
-PLATFORM = RALINK_3050
-endif
-ifeq ($(MODULE),3052)
-PLATFORM = RALINK_3052
-endif
-ifeq ($(MODULE),3350)
-PLATFORM = RALINK_3050
-endif
-ifeq ($(MODULE),3352)
-PLATFORM = RALINK_3352
-endif
-
-
-#RELEASE Package
-RELEASE = DPO
-
-
-ifeq ($(TARGET),LINUX)
-MAKE = make
-endif
-
-ifeq ($(TARGET), UCOS)
-MAKE = make
-endif
-ifeq ($(TARGET),THREADX)
-MAKE = gmake
-endif
-
-ifeq ($(TARGET), ECOS)
-MAKE = make
-MODULE = $(shell pwd | sed "s/.*\///" ).o
-export MODULE
-endif
-
-ifeq ($(PLATFORM),5VT)
-LINUX_SRC = /home/ralink-2860-sdk-5vt-distribution/linux-2.6.17
-CROSS_COMPILE = /opt/crosstool/uClibc_v5te_le_gcc_4_1_1/bin/arm-linux-
-endif
-
-ifeq ($(PLATFORM),UBICOM_IPX8)
-LINUX_SRC = /home/sample/Customers/UBICOM/ubicom-linux-dist-2.1.1/linux-2.6.x
-CROSS_COMPILE = ubicom32-elf-
-endif
-
-ifeq ($(PLATFORM),IKANOS_V160)
-LINUX_SRC = /home/sample/projects/LX_2618_RG_5_3_00r4_SRC/linux-2.6.18
-CROSS_COMPILE = mips-linux-
-endif
-
-ifeq ($(PLATFORM),IKANOS_V180)
-LINUX_SRC = /home/sample/projects/LX_BSP_VX180_5_4_0r1_ALPHA_26DEC07/linux-2.6.18
-CROSS_COMPILE = mips-linux-
-endif
-
-ifeq ($(PLATFORM),SIGMA)
-LINUX_SRC = /root/sigma/smp86xx_kernel_source_2.7.172.0/linux-2.6.15
-CROSS_COMPILE = /root/sigma/smp86xx_toolchain_2.7.172.0/build_mipsel_nofpu/staging_dir/bin/mipsel-linux-
-endif
-
-ifeq ($(PLATFORM),SIGMA_8622)
-LINUX_SRC = /home/snowpin/armutils_2.5.120.1/build_arm/linux-2.4.22-em86xx
-CROSS_COMPILE = /home/snowpin/armutils_2.5.120.1/toolchain/bin/arm-elf-
-CROSS_COMPILE_INCLUDE = /home/snowpin/armutils_2.5.120.1/toolchain/lib/gcc-lib/arm-elf/2.95.3
-endif
-
-ifeq ($(PLATFORM),INIC)
-UCOS_SRC = /opt/uCOS/iNIC_rt2880
-CROSS_COMPILE = /usr/bin/mipsel-linux-
-endif
-
-ifeq ($(PLATFORM),STAR)
-LINUX_SRC = /opt/star/kernel/linux-2.4.27-star
-CROSS_COMPILE = /opt/star/tools/arm-linux/bin/arm-linux-
-endif
-
-ifeq ($(PLATFORM),RMI)
-LINUX_SRC = /opt/rmi/1.7.0/linux/src/
-CROSS_COMPILE = /opt/rmi/1.7.0/mipscross/nptl/bin/mips64-unknown-linux-gnu-
-endif
-
-ifeq ($(PLATFORM),RMI_64)
-LINUX_SRC = /opt/rmi/1.7.0/linux_64/src/
-CROSS_COMPILE = /opt/rmi/1.7.0/mipscross/nptl/bin/mips64-unknown-linux-gnu-
-endif
-
-ifeq ($(PLATFORM), RALINK_2880)
-LINUX_SRC = /project/stable/RT288x/RT288x_SDK/source/linux-2.4.x
-CROSS_COMPILE = /opt/buildroot-gdb/bin/mipsel-linux-
-endif
-
-ifeq ($(PLATFORM),RALINK_3052)
-LINUX_SRC = /home/peter/ap_soc/SDK_3_3_0_0/RT288x_SDK/source/linux-2.6.21.x
-CROSS_COMPILE = /opt/buildroot-gcc342/bin/mipsel-linux-uclibc-
-endif
-
-ifeq ($(PLATFORM),FREESCALE8377)
-LINUX_SRC = /opt/ltib-mpc8377_rds-20090309/rpm/BUILD/linux-2.6.25 
-CROSS_COMPILE = /opt/freescale/usr/local/gcc-4.2.187-eglibc-2.5.187/powerpc-linux-gnu/bin/powerpc-linux-gnu-
-endif
-
-ifeq ($(PLATFORM),BL2348)
-LINUX_SRC = /home/sample/Customers/BroadLight/bl234x-linux-2.6.21-small-v29
-CROSS_COMPILE = mips-wrs-linux-gnu-
-endif
-
-ifeq ($(PLATFORM),BL23570)
-LINUX_SRC = /home/FIBERHOME/linux-2.6.34.8
-CROSS_COMPILE = mips-wrs-linux-gnu-mips_74k_softfp-glibc_small-
-ARCH:=mips
-export $ARCH
-endif
-
-
-ifeq ($(PLATFORM),BLUBB)
-LINUX_SRC = /home/sample/Customers/BroadLight/UBB/gmp20/linux-2.6.21-small
-CROSS_COMPILE = mips-wrs-linux-gnu-
-endif
-
-ifeq ($(PLATFORM),BLPMP)
-LINUX_SRC = /home/sample/Customers/BroadLight/UBB/pmp16/bl234x-linux-2.6.21-small-v30.2
-CROSS_COMPILE = mips-wrs-linux-gnu-
-endif
-
-ifeq ($(PLATFORM),PC)
-# Linux 2.6
-LINUX_SRC = /lib/modules/$(shell uname -r)/build
-# Linux 2.4 Change to your local setting
-#LINUX_SRC = /usr/src/linux-2.4
-LINUX_SRC_MODULE = /lib/modules/$(shell uname -r)/kernel/drivers/net/wireless/
-CROSS_COMPILE = 
-endif
-
-ifeq ($(PLATFORM),INTELP6)
-LINUX_SRC = /tftpboot/IntelCE-20.0.11052.243193/project_build_i686/IntelCE/kernel-20.0.11024.238456/linux-2.6.35
-CROSS_COMPILE = /tftpboot/IntelCE-20.0.11052.243193/build_i686/i686-linux-elf/bin/i686-cm-linux-
-endif
-
-ifeq ($(PLATFORM),IXP)
-LINUX_SRC = /project/stable/Gmtek/snapgear-uclibc/linux-2.6.x
-CROSS_COMPILE = arm-linux-
-endif
-
-ifeq ($(PLATFORM),INF_TWINPASS)
-# Linux 2.6
-#LINUX_SRC = /lib/modules/$(shell uname -r)/build
-# Linux 2.4 Change to your local setting
-LINUX_SRC = /project/stable/twinpass/release/2.0.1/source/kernel/opensource/linux-2.4.31/
-CROSS_COMPILE = mips-linux-
-endif
-
-ifeq ($(PLATFORM),INF_DANUBE)
-LINUX_SRC = /opt/danube/sdk/linux-2.6.16.x
-CROSS_COMPILE = mips-linux-
-ROOTDIR = /opt/danube/sdk
-export ROOTDIR
-endif
-
-ifeq ($(PLATFORM),INF_AR9)
-LINUX_SRC = /root/ar9/xR9_BSP1.2.2.0/source/kernel/opensource/linux-2.6.20/
-CROSS_COMPILE = /root/ar9/ifx-lxdb26-1.0.2/gcc-3.4.4/toolchain-mips/bin/
-endif
-
-ifeq ($(PLATFORM),INF_VR9)
-LINUX_SRC = /home/public/lantiq/VR9/UGW-4.2/build_dir/linux-ifxcpe_platform_vr9/linux-2.6.20.19
-CROSS_COMPILE = /home/public/lantiq/VR9/UGW-4.2/staging_dir/toolchain-mips_gcc-3.4.6_uClibc-0.9.29/bin/mips-linux-
-endif
-
-ifeq ($(PLATFORM),BRCM_6358)
-LINUX_SRC = 
-CROSS_COMPILE = 
-endif
-
-ifeq ($(PLATFORM),INF_AMAZON_SE)
-# Linux 2.6
-#LINUX_SRC = /lib/modules/$(shell uname -r)/build
-# Linux 2.4 Change to your local setting
-LINUX_SRC = /backup/ifx/3.6.2.2/source/kernel/opensource/linux-2.4.31
-#CROSS_COMPILE = mips-linux-
-#LINUX_SRC = /project/Infineon/3.6.2.2/source/kernel/opensource/linux-2.4.31
-CROSS_COMPILE = /opt/uclibc-toolchain/ifx-lxdb-1-2-3-external/gcc-3.3.6/toolchain-mips/R0208V35/mips-linux-uclibc/bin/
-endif
-
-ifeq ($(PLATFORM),ST)
-LINUX_SRC = /opt/STM/STLinux-2.2/devkit/sources/kernel/linux0039
-CROSS_COMPILE = /opt/STM/STLinux-2.2/devkit/sh4/bin/sh4-linux-
-ARCH := sh
-export ARCH
-endif
-
-ifeq ($(PLATFORM),CAVM_OCTEON)
-OCTEON_ROOT = /usr/local/Cavium_Networks/OCTEON-SDK
-LINUX_SRC = $(OCTEON_ROOT)/linux/kernel_2.6/linux
-CROSS_COMPILE = mips64-octeon-linux-gnu-
-endif
-
-ifeq ($(PLATFORM),CMPC)
-LINUX_SRC = /opt/fvt_11N_SDK_0807/fvt131x_SDK_11n/linux-2.6.17
-CROSS_COMPILE =
-endif
-
-ifeq ($(PLATFORM),SMDK)
-LINUX_SRC = /home/bhushan/itcenter/may28/linux-2.6-samsung
-CROSS_COMPILE = /usr/local/arm/4.2.2-eabi/usr/bin/arm-linux-
-endif
-
-ifeq ($(PLATFORM),RALINK_3352)
-LINUX_SRC = /home/sample/3352/RT288x_SDK/source/linux-2.6.21.x
-CROSS_COMPILE = /opt/buildroot-gcc342/bin/mipsel-linux-
-endif
-
-ifeq ($(PLATFORM),KODAK_DC)
-SKD_SRC = C:/SigmaTel/DC1250_SDK_v1-9/sdk
-CROSS_COMPILE = $(cc)
-endif
-
-ifeq ($(PLATFORM),DM6446)
-LINUX_SRC = /home/fonchi/work/soc/ti-davinci
-endif
-
-ifeq ($(PLATFORM),MT85XX)
-LINUX_SRC = $(RT28xx_DIR)/../../../../build_linux
-ifeq ($(CROSS_COMPILE),)
-CROSS_COMPILE=armv7a-mediatek451_001_vfp-linux-gnueabi-
-endif
-CC=$(CROSS_COMPILE)gcc
-$(warning =============================================)
-$(warning CC=$(CC) for wifi driver)
-$(warning =============================================)
-endif
-
-ifeq ($(PLATFORM),NXP_TV550) 
-LINUX_SRC = /data/tv550/kernel/linux-2.6.28.9
-LINUX_SRC_MODULE = /data/tv550/kernel/linux-2.6.28.9/drivers/net/wireless
-CROSS_COMPILE = /opt/embeddedalley/nxp_tv550/bin/mipsel-linux-
-endif
-
-ifeq ($(PLATFORM),MVL5)
-LINUX_SRC = /home2/charlestu/AP-VT3426/linux-2.6.18
-CROSS_COMPILE = /opt/montavista/pro/devkit/arm/v5t_le_mvl5/bin/arm_v5t_le-
-endif
-
-export OSABL RT28xx_DIR RT28xx_MODE LINUX_SRC CROSS_COMPILE CROSS_COMPILE_INCLUDE PLATFORM RELEASE CHIPSET MODULE RTMP_SRC_DIR LINUX_SRC_MODULE TARGET HAS_WOW_SUPPORT
-
-# The targets that may be used.
-PHONY += all build_tools test UCOS THREADX LINUX release prerelease clean uninstall install libwapi osabl
-
-ifeq ($(TARGET),LINUX)
-all: build_tools $(TARGET)
-else
-all: $(TARGET)
-endif 
-
-
-
-build_tools:
-	$(MAKE) -C tools
-	$(RT28xx_DIR)/tools/bin2h
-
-test:
-	$(MAKE) -C tools test
-
-UCOS:
-	$(MAKE) -C os/ucos/ MODE=$(RT28xx_MODE)
-	echo $(RT28xx_MODE)
-
-ECOS:
-	$(MAKE) -C os/ecos/ MODE=$(RT28xx_MODE)
-	cp -f os/ecos/$(MODULE) $(MODULE)
-
-THREADX:
-	$(MAKE) -C $(RT28xx_DIR)/os/Threadx -f $(RT28xx_DIR)/os/ThreadX/Makefile
-
-LINUX:
-ifneq (,$(findstring 2.4,$(LINUX_SRC)))
+HAS_WPA_SUPPLICANT                = y
+HAS_NATIVE_WPA_SUPPLICANT_SUPPORT = y
+HAS_DOT11N_DRAFT3_SUPPORT         = y
+HAS_DOT11_N_SUPPORT               = y
+HAS_DOT11_VHT_SUPPORT             = y
+HAS_STATS_COUNT                   = y
+HAS_NEW_RATE_ADAPT_SUPPORT        = y
 
 ifeq ($(OSABL),YES)
-	cp -f os/linux/Makefile.4.util $(RT28xx_DIR)/os/linux/Makefile
-	$(MAKE) -C $(RT28xx_DIR)/os/linux/
+HAS_OSABL_FUNC_SUPPORT=y
+HAS_OSABL_OS_PCI_SUPPORT=y
+HAS_OSABL_OS_USB_SUPPORT=y
+HAS_OSABL_OS_RBUS_SUPPORT=n
+HAS_OSABL_OS_AP_SUPPORT=y
+HAS_OSABL_OS_STA_SUPPORT=y
 endif
 
-	cp -f os/linux/Makefile.4 $(RT28xx_DIR)/os/linux/Makefile
-	$(MAKE) -C $(RT28xx_DIR)/os/linux/
+HAS_TEMPERATURE_TX_ALC           = y
 
-ifeq ($(OSABL),YES)
-	cp -f os/linux/Makefile.4.netif $(RT28xx_DIR)/os/linux/Makefile
-	$(MAKE) -C $(RT28xx_DIR)/os/linux/
-endif
+EXTRA_CFLAGS += -I$(src)/include
+EXTRA_CFLAGS += -Wall -O2 -Wundef -Wstrict-prototypes
+EXTRA_CFLAGS += -Wno-trigraphs -Wdeclaration-after-statement 
+EXTRA_CFLAGS += -Wno-pointer-sign -fno-strict-aliasing -fno-common 
+EXTRA_CFLAGS += -fomit-frame-pointer -ffreestanding -m4-nofpu
 
-ifeq ($(RT28xx_MODE),AP)
-	cp -f $(RT28xx_DIR)/os/linux/$(MODULE)_ap.o /tftpboot
-ifeq ($(OSABL),YES)
-	cp -f $(RT28xx_DIR)/os/linux/rtutil$(MODULE)_ap.o /tftpboot
-	cp -f $(RT28xx_DIR)/os/linux/rtnet$(MODULE)_ap.o /tftpboot
-endif
-ifeq ($(PLATFORM),INF_AMAZON_SE)
-	cp -f /tftpboot/rt2870ap.o /backup/ifx/build/root_filesystem/lib/modules/2.4.31-Amazon_SE-3.6.2.2-R0416_Ralink/kernel/drivers/net
-endif
-else	
-ifeq ($(RT28xx_MODE),APSTA)
-	cp -f $(RT28xx_DIR)/os/linux/$(MODULE)_apsta.o /tftpboot
-ifeq ($(OSABL),YES)
-	cp -f $(RT28xx_DIR)/os/linux/rtutil$(MODULE)_apsta.o /tftpboot
-	cp -f $(RT28xx_DIR)/os/linux/rtnet$(MODULE)_apsta.o /tftpboot
-endif
-else
-	cp -f $(RT28xx_DIR)/os/linux/$(MODULE)_sta.o /tftpboot
-ifeq ($(OSABL),YES)
-	cp -f $(RT28xx_DIR)/os/linux/rtutil$(MODULE)_sta.o /tftpboot
-	cp -f $(RT28xx_DIR)/os/linux/rtnet$(MODULE)_sta.o /tftpboot
-endif
-endif	
-endif	
-else
+WFLAGS := -DAGGREGATION_SUPPORT -DPIGGYBACK_SUPPORT -DWMM_SUPPORT  -DLINUX -Wall -Wstrict-prototypes -Wno-trigraphs 
+WFLAGS += -DSYSTEM_LOG_SUPPORT  -DRT28xx_MODE=$(RT28xx_MODE) -DCHIPSET=$(CHIPSET) -DRESOURCE_PRE_ALLOC -DENHANCED_STAT_DISPLAY -DST -D__KERNEL__
+# WFLAGS := -g -DAGGREGATION_SUPPORT -DPIGGYBACK_SUPPORT -DWMM_SUPPORT  -DLINUX -Wall -Wstrict-prototypes -Wno-trigraphs
+# WFLAGS += -DSYSTEM_LOG_SUPPORT -DRT28xx_MODE=$(RT28xx_MODE) -DCHIPSET=$(MODULE) -DRESOURCE_PRE_ALLOC -DENHANCED_STAT_DISPLAY
 
-ifeq ($(OSABL),YES)
-	cp -f os/linux/Makefile.6.util $(RT28xx_DIR)/os/linux/Makefile
-	$(MAKE) -C $(LINUX_SRC) SUBDIRS=$(RT28xx_DIR)/os/linux modules
+ifeq ($(HAS_WIFI_P2P_CONCURRENT_FAST_SCAN),y)
+WFLAGS += -DWIFI_P2P_CONCURRENT_FAST_SCAN
 endif
 
-	cp -f os/linux/Makefile.6 $(RT28xx_DIR)/os/linux/Makefile
-ifeq ($(PLATFORM),DM6446)
-	$(MAKE)  ARCH=arm CROSS_COMPILE=arm_v5t_le- -C  $(LINUX_SRC) SUBDIRS=$(RT28xx_DIR)/os/linux modules
-else
-ifeq ($(PLATFORM),FREESCALE8377)
-	$(MAKE) ARCH=powerpc CROSS_COMPILE=$(CROSS_COMPILE) -C  $(LINUX_SRC) SUBDIRS=$(RT28xx_DIR)/os/linux modules
-else
-	$(MAKE) -C $(LINUX_SRC) SUBDIRS=$(RT28xx_DIR)/os/linux modules
-endif
+ifeq ($(HAS_HE_SUPPORT),y)
+WFLAGS += -DHE_SUPPORT
+WFLAGS += -DIP_ASSEMBLY
 endif
 
-ifeq ($(OSABL),YES)
-	cp -f os/linux/Makefile.6.netif $(RT28xx_DIR)/os/linux/Makefile
-	$(MAKE) -C $(LINUX_SRC) SUBDIRS=$(RT28xx_DIR)/os/linux modules
+ifeq ($(HAS_HE_BD_SUPPORT),y)
+WFLAGS += -DHE_BD_SUPPORT
 endif
 
-ifeq ($(RT28xx_MODE),AP)
-	cp -f $(RT28xx_DIR)/os/linux/$(MODULE)_ap.ko /tftpboot
-ifeq ($(OSABL),YES)
-	cp -f $(RT28xx_DIR)/os/linux/$(MODULE)_ap_util.ko /tftpboot
-	cp -f $(RT28xx_DIR)/os/linux/$(MODULE)_ap_net.ko /tftpboot
+ifeq ($(HAS_WEPAUTO_OPEN_FIRST_SUPPORT),y)
+WFLAGS += -DWEPAUTO_OPEN_FIRST
 endif
-	rm -f os/linux/$(MODULE)_ap.ko.lzma
-	/root/bin/lzma e os/linux/$(MODULE)_ap.ko os/linux/$(MODULE)_ap.ko.lzma
-else	
-ifeq ($(RT28xx_MODE),APSTA)
-	cp -f $(RT28xx_DIR)/os/linux/$(MODULE)_apsta.ko /tftpboot
-ifeq ($(OSABL),YES)
-	cp -f $(RT28xx_DIR)/os/linux/$(MODULE)_apsta_util.ko /tftpboot
-	cp -f $(RT28xx_DIR)/os/linux/$(MODULE)_apsta_net.ko /tftpboot
+
+ifeq ($(HAS_HE_TV_SUPPORT),y)
+WFLAGS += -DHE_TV_SUPPORT
 endif
-else
-	cp -f $(RT28xx_DIR)/os/linux/$(MODULE)_sta.ko /tftpboot 2>/dev/null || :
-ifeq ($(OSABL),YES)
-	cp -f $(RT28xx_DIR)/os/linux/$(MODULE)_sta_util.ko /tftpboot 2>/dev/null || :
-	cp -f $(RT28xx_DIR)/os/linux/$(MODULE)_sta_net.ko /tftpboot 2>/dev/null || :
+
+ifeq ($(HAS_KTHREAD_SUPPORT),y)
+WFLAGS += -DKTHREAD_SUPPORT
 endif
-ifeq ($(PLATFORM),MT85XX)
-	cp -f $(RT28xx_DIR)/os/linux/rtsta.ko $(RT28xx_DIR)/../../../../../BDP_Generic/build_linux_ko/src/driver/wlan/
+
+ifeq ($(HAS_RTMP_FLASH_SUPPORT),y)
+WFLAGS += -DRTMP_FLASH_SUPPORT
 endif
+
+ifeq ($(HAS_STREAM_MODE_SUPPORT),y)
+WFLAGS += -DSTREAM_MODE_SUPPORT
 endif
+
+ifeq ($(HAS_SINGLE_SKU_SUPPORT),y)
+WFLAGS += -DSINGLE_SKU_V2
 endif
+
+ifeq ($(HAS_HDR_TRANS_SUPPORT),y)
+WFLAGS += -DHDR_TRANS_SUPPORT
+endif
+
+ifeq ($(HAS_DOT11_VHT_SUPPORT),y)
+WFLAGS += -DDOT11_VHT_AC
 endif
 
 
-release: build_tools
-	$(MAKE) -C $(RT28xx_DIR)/striptool -f Makefile.release clean
-	$(MAKE) -C $(RT28xx_DIR)/striptool -f Makefile.release
-	striptool/striptool.out
-ifeq ($(RELEASE), DPO)
-	gcc -o striptool/banner striptool/banner.c
-	./striptool/banner -b striptool/copyright.gpl -s DPO/ -d DPO_GPL -R
-	./striptool/banner -b striptool/copyright.frm -s DPO_GPL/include/firmware.h
+ifeq ($(HAS_MAC_REPEATER_SUPPORT),y)
+WFLAGS += -DMAC_REPEATER_SUPPORT
 endif
 
-prerelease:
-ifeq ($(MODULE), 2880)
-	$(MAKE) -C $(RT28xx_DIR)/os/linux -f Makefile.release.2880 prerelease
-else
-	$(MAKE) -C $(RT28xx_DIR)/os/linux -f Makefile.release prerelease
-endif
-	cp $(RT28xx_DIR)/os/linux/Makefile.DPB $(RTMP_SRC_DIR)/os/linux/.
-	cp $(RT28xx_DIR)/os/linux/Makefile.DPA $(RTMP_SRC_DIR)/os/linux/.
-	cp $(RT28xx_DIR)/os/linux/Makefile.DPC $(RTMP_SRC_DIR)/os/linux/.
+
+#################################################
+
+# config for STA mode
+
 ifeq ($(RT28xx_MODE),STA)
-	cp $(RT28xx_DIR)/os/linux/Makefile.DPD $(RTMP_SRC_DIR)/os/linux/.
-	cp $(RT28xx_DIR)/os/linux/Makefile.DPO $(RTMP_SRC_DIR)/os/linux/.
-endif	
+WFLAGS += -DCONFIG_STA_SUPPORT -DSCAN_SUPPORT -DDBG
 
-clean:
-ifeq ($(TARGET), LINUX)
-	cp -f os/linux/Makefile.clean os/linux/Makefile
-	$(MAKE) -C os/linux clean
-	rm -rf os/linux/Makefile
-endif	
-ifeq ($(TARGET), UCOS)
-	$(MAKE) -C os/ucos clean MODE=$(RT28xx_MODE)
-endif
-ifeq ($(TARGET), ECOS)
-	$(MAKE) -C os/ecos clean MODE=$(RT28xx_MODE)
+ifeq ($(HAS_HDR_TRANS_SUPPORT),y)
+WFLAGS += -DHDR_TRANS_TX_SUPPORT
 endif
 
-uninstall:
-ifeq ($(TARGET), LINUX)
-ifneq (,$(findstring 2.4,$(LINUX_SRC)))
-	$(MAKE) -C $(RT28xx_DIR)/os/linux -f Makefile.4 uninstall
-else
-	$(MAKE) -C $(RT28xx_DIR)/os/linux -f Makefile.6 uninstall
+ifeq ($(HAS_XLINK),y)
+WFLAGS += -DXLINK_SUPPORT
+endif
+
+
+ifeq ($(HAS_WPA_SUPPLICANT),y)
+WFLAGS += -DWPA_SUPPLICANT_SUPPORT
+ifeq ($(HAS_NATIVE_WPA_SUPPLICANT_SUPPORT),y)
+WFLAGS += -DNATIVE_WPA_SUPPLICANT_SUPPORT
 endif
 endif
 
-install:
-ifeq ($(TARGET), LINUX)
-ifneq (,$(findstring 2.4,$(LINUX_SRC)))
-	$(MAKE) -C $(RT28xx_DIR)/os/linux -f Makefile.4 install
-else
-	$(MAKE) -C $(RT28xx_DIR)/os/linux -f Makefile.6 install
+
+
+
+ifeq ($(HAS_ATE),y)
+WFLAGS += -DRALINK_ATE
+WFLAGS += -DCONFIG_RT2880_ATE_CMD_NEW
+WFLAGS += -I$(src)/ate/include
+ifeq ($(HAS_QA_SUPPORT),y)
+WFLAGS += -DRALINK_QA
 endif
 endif
 
-libwapi:
-ifneq (,$(findstring 2.4,$(LINUX_SRC)))
-	cp -f os/linux/Makefile.libwapi.4 $(RT28xx_DIR)/os/linux/Makefile
-	$(MAKE) -C $(RT28xx_DIR)/os/linux/
-else
-	cp -f os/linux/Makefile.libwapi.6 $(RT28xx_DIR)/os/linux/Makefile	
-	$(MAKE) -C  $(LINUX_SRC) SUBDIRS=$(RT28xx_DIR)/os/linux modules	
-endif	
 
-osutil:
+ifeq ($(HAS_SNMP_SUPPORT),y)
+WFLAGS += -DSNMP_SUPPORT
+endif
+
+ifeq ($(HAS_QOS_DLS_SUPPORT),y)
+WFLAGS += -DQOS_DLS_SUPPORT
+endif
+
+ifeq ($(HAS_DOT11_N_SUPPORT),y)
+WFLAGS += -DDOT11_N_SUPPORT
+
+ifeq ($(HAS_DOT11N_DRAFT3_SUPPORT),y)
+WFLAGS += -DDOT11N_DRAFT3
+endif
+
+ifeq ($(HAS_TXBF_SUPPORT),y)
+WFLAGS += -DTXBF_SUPPORT
+endif
+
+ifeq ($(HAS_NEW_RATE_ADAPT_SUPPORT),y)
+WFLAGS += -DNEW_RATE_ADAPT_SUPPORT
+endif
+
+endif
+
+
+ifeq ($(HAS_WFD_SUPPORT),y)
+HAS_P2P_SUPPORT=y
+HAS_P2P_SPECIFIC_WIRELESS_EVENT=y
+WFLAGS += -DWFD_SUPPORT
+endif
+
+
+ifeq ($(HAS_CS_SUPPORT),y)
+WFLAGS += -DCARRIER_DETECTION_SUPPORT
+endif
+
+ifeq ($(HAS_STATS_COUNT),y)
+WFLAGS += -DSTATS_COUNT_SUPPORT
+endif
+
+ifeq ($(HAS_TSSI_ANTENNA_VARIATION),y)
+WFLAGS += -DTSSI_ANTENNA_VARIATION
+endif
+
+ifeq ($(HAS_ANDROID_SUPPORT),y)
+WFLAGS += -DANDROID_SUPPORT
+endif
+
+
+ifeq ($(HAS_IFUP_IN_PROBE_SUPPORT),y)
+WFLAGS += -DIFUP_IN_PROBE
+endif
+
+ifeq ($(HAS_USB_SUPPORT_SELECTIVE_SUSPEND),y)
+WFLAGS += -DUSB_SUPPORT_SELECTIVE_SUSPEND
+endif
+
+ifeq ($(HAS_USB_FIRMWARE_MULTIBYTE_WRITE),y)
+WFLAGS += -DUSB_FIRMWARE_MULTIBYTE_WRITE -DMULTIWRITE_BYTES=4
+endif
+
+ifeq ($(HAS_CFG80211_SUPPORT),y)
+WFLAGS += -DRT_CFG80211_SUPPORT -DEXT_BUILD_CHANNEL_LIST
+ifeq ($(HAS_RFKILL_HW_SUPPORT),y)
+WFLAGS += -DRFKILL_HW_SUPPORT
+endif
+endif
+
 ifeq ($(OSABL),YES)
-ifneq (,$(findstring 2.4,$(LINUX_SRC)))
-	cp -f os/linux/Makefile.4.util $(RT28xx_DIR)/os/linux/Makefile
-	$(MAKE) -C $(RT28xx_DIR)/os/linux/
-else
-	cp -f os/linux/Makefile.6.util $(RT28xx_DIR)/os/linux/Makefile
-	$(MAKE) -C $(LINUX_SRC) SUBDIRS=$(RT28xx_DIR)/os/linux modules
+WFLAGS += -DOS_ABL_SUPPORT
+ifeq ($(HAS_OSABL_FUNC_SUPPORT),y)
+WFLAGS += -DOS_ABL_FUNC_SUPPORT
+endif
+ifeq ($(HAS_OSABL_OS_PCI_SUPPORT),y)
+WFLAGS += -DOS_ABL_OS_PCI_SUPPORT
+endif
+ifeq ($(HAS_OSABL_OS_USB_SUPPORT),y)
+WFLAGS += -DOS_ABL_OS_USB_SUPPORT
+endif
+ifeq ($(HAS_OSABL_OS_RBUS_SUPPORT),y)
+WFLAGS += -DOS_ABL_OS_RBUS_SUPPORT
+endif
+ifeq ($(HAS_OSABL_OS_AP_SUPPORT),y)
+WFLAGS += -DOS_ABL_OS_AP_SUPPORT
+endif
+ifeq ($(HAS_OSABL_OS_STA_SUPPORT),y)
+WFLAGS += -DOS_ABL_OS_STA_SUPPORT
 endif
 endif
 
-osnet:
+
+ifeq ($(HAS_TXRX_SW_ANTDIV_SUPPORT),y)
+WFLAGS += -DTXRX_SW_ANTDIV_SUPPORT
+endif
+
+
+ifeq ($(HAS_WIDI_SUPPORT),y)
+WFLAGS += -DWIDI_SUPPORT
+
+ifeq ($(HAS_P2P_SUPPORT),y)
+ifeq ($(HAS_INTEL_WFD_SUPPORT),y)
+WFLAGS += -DINTEL_WFD_SUPPORT
+endif
+
+ifeq ($(HAS_WFA_WFD_SUPPORT),y)
+WFLAGS += -DWFA_WFD_SUPPORT
+endif
+endif
+
+endif
+
+ifeq ($(HAS_WOW_SUPPORT),y)
+WFLAGS += -DWOW_SUPPORT
+endif
+
+ifeq ($(HAS_WOW_IFDOWN_SUPPORT),y)
+WFLAGS += -DWOW_IFDOWN_SUPPORT
+endif
+
+endif
+# endif of ifeq ($(RT28xx_MODE),STA)
+
+#################################################
+
+#################################################
+
+#
+# Common compiler flag
+#
+
+
+
+
+
+
+ifeq ($(HAS_EXT_BUILD_CHANNEL_LIST),y)
+WFLAGS += -DEXT_BUILD_CHANNEL_LIST
+endif
+
+ifeq ($(HAS_IDS_SUPPORT),y)
+WFLAGS += -DIDS_SUPPORT
+endif
+
+
 ifeq ($(OSABL),YES)
-ifneq (,$(findstring 2.4,$(LINUX_SRC)))
-	cp -f os/linux/Makefile.4.netif $(RT28xx_DIR)/os/linux/Makefile
-	$(MAKE) -C $(RT28xx_DIR)/os/linux/
+WFLAGS += -DEXPORT_SYMTAB
+endif
+
+ifeq ($(HAS_CLIENT_WDS_SUPPORT),y)
+WFLAGS += -DCLIENT_WDS
+endif
+
+ifeq ($(HAS_BGFP_SUPPORT),y)
+WFLAGS += -DBG_FT_SUPPORT
+endif
+
+ifeq ($(HAS_BGFP_OPEN_SUPPORT),y)
+WFLAGS += -DBG_FT_OPEN_SUPPORT
+endif
+
+
+ifeq ($(HAS_LED_CONTROL_SUPPORT),y)
+WFLAGS += -DLED_CONTROL_SUPPORT
+endif
+
+ifeq ($(HAS_FPGA_MODE),y)
+WFLAGS += -DCONFIG_FPGA_MODE
+endif
+
+ifeq ($(HAS_WIFI_TEST),y)
+WFLAGS += -DCONFIG_WIFI_TEST
+endif
+
+
+ifeq ($(HAS_TEMPERATURE_TX_ALC),y)
+WFLAGS += -DRTMP_TEMPERATURE_TX_ALC
+endif
+
+#################################################
+# ChipSet specific definitions.
+#
+
+
+ifneq ($(findstring 7610U,$(CHIPSET)),)
+WFLAGS += -DMT76x0 -DRT65xx -DRLT_MAC -DRLT_RF -DRTMP_MAC_USB -DRTMP_USB_SUPPORT -DRTMP_TIMER_TASK_SUPPORT -DA_BAND_SUPPORT -DRTMP_EFUSE_SUPPORT -DNEW_MBSSID_MODE -DCONFIG_ANDES_SUPPORT
+#-DRTMP_FREQ_CALIBRATION_SUPPORT
+#-DRX_DMA_SCATTER
+WFLAGS += -DMT7610
+
+ifneq ($(findstring $(RT28xx_MODE),AP),)
+#WFLAGS += -DSPECIFIC_BCN_BUF_SUPPORT
+endif
+
+ifeq ($(HAS_CSO_SUPPORT), y)
+WFLAGS += -DCONFIG_CSO_SUPPORT -DCONFIG_TSO_SUPPORT
+endif
+
+CHIPSET_DAT = 2860
+# CHIPSET_DAT = 2870
+endif
+
+
+#################################################
+
+EXTRA_CFLAGS += -o $(WFLAGS) 
+
+# MOD_NAME = mt$(CHIPSET)sta
+
+obj_wsc :=
+obj_vht :=
+obj_cmm := \
+	common/crypt_md5.o\
+        common/crypt_sha2.o\
+        common/crypt_hmac.o\
+        common/crypt_aes.o\
+        common/crypt_arc4.o\
+        common/mlme.o\
+        common/cmm_wep.o\
+        common/action.o\
+        common/cmm_data.o\
+	common/rtmp_init.o\
+        common/rtmp_init_inf.o\
+        common/cmm_tkip.o\
+        common/cmm_aes.o\
+        common/cmm_sync.o\
+        common/eeprom.o\
+        common/cmm_sanity.o\
+        common/cmm_info.o\
+        common/cmm_cfg.o\
+        common/cmm_wpa.o\
+        common/cmm_radar.o\
+	common/spectrum.o\
+        common/rtmp_timer.o\
+        common/rt_channel.o\
+        common/cmm_profile.o\
+        common/cmm_asic.o\
+        common/scan.o\
+        common/cmm_cmd.o\
+        common/uapsd.o\
+	common/ps.o\
+	rate_ctrl/ra_ctrl.o\
+        rate_ctrl/alg_legacy.o\
+        rate_ctrl/alg_ags.o\
+	chips/rtmp_chip.o\
+		common/txpower.o\
+	mac/rtmp_mac.o\
+	mgmt/mgmt_hw.o\
+	mgmt/mgmt_entrytb.o\
+        phy/rtmp_phy.o\
+        phy/rlt_phy.o\
+	phy/rlt_rf.o
+
+ifeq ($(HAS_BLOCK_NET_IF),y)
+obj_cmm += common/netif_block.o
+endif
+
+ifeq ($(HAS_NEW_RATE_ADAPT_SUPPORT),y)
+obj_cmm += rate_ctrl/alg_grp.o
+endif
+
+ifeq ($(HAS_RATE_ADAPT_AGS_SUPPORT),y)
+obj_cmm += rate_ctrl/alg_ags.o
+endif
+
+ifeq ($(HAS_DFS_SUPPORT),y)
+obj_cmm += common/cmm_dfs.o
+endif
+
+ifeq ($(HAS_CS_SUPPORT),y)
+obj_cmm += common/cmm_cs.o
+endif
+
+#ifdef DOT11_N_SUPPORT
+ifeq ($(HAS_DOT11_N_SUPPORT),y)
+obj_cmm += \
+        common/ba_action.o\
+        mgmt/mgmt_ht.o
+
+#ifdef TXBF_SUPPORT
+ifeq ($(HAS_TXBF_SUPPORT),y)
+obj_cmm += \
+        common/cmm_txbf.o\
+        common/cmm_txbf_cal.o
+endif
+#endif // TXBF_SUPPORT //
+endif
+#endif // DOT11_N_SUPPORT //
+
+#ifdef DOT11_VHT_SUPPORT
+ifeq ($(HAS_DOT11_VHT_SUPPORT),y)
+obj_vht += mgmt/mgmt_vht.o\
+	common/vht.o
+endif
+#endif // DOT11_VHT_SUPPORT //
+
+
+#ifdef CONFIG_STA_SUPPORT
+ifeq ($(RT28xx_MODE), STA)
+MOD_NAME = mt$(CHIPSET)sta
+# MOD_NAME = $(MODULE)_sta
+ifeq ($(PLATFORM),MT85XX)
+MOD_NAME = rtsta
+endif
+ifeq ($(PLATFORM),MT53XX)
+MOD_NAME = rtsta
+endif
+DAT_PATH = /etc/Wireless/RT$(CHIPSET_DAT)STA
+DAT_FILE_NAME = conf/RT$(CHIPSET_DAT)STA.dat
+endif
+#endif // CONFIG_STA_SUPPORT //
+
+obj-m := $(MOD_NAME).o
+
+
+#ifdef CONFIG_STA_SUPPORT
+ifeq ($(RT28xx_MODE), STA)
+$(MOD_NAME)-objs := \
+	os/linux/rt_profile.o\
+	sta/assoc.o\
+	sta/auth.o\
+	sta/auth_rsp.o\
+	sta/sync.o\
+	sta/sanity.o\
+	sta/rtmp_data.o\
+	sta/connect.o\
+	sta/wpa.o\
+	sta/sta_cfg.o\
+	$(obj_vht)\
+	$(obj_cmm)\
+	$(obj_wsc)
+
+
+ifeq ($(OSABL),NO)
+$(MOD_NAME)-objs += \
+	common/rt_os_util.o\
+	os/linux/sta_ioctl.o\
+	os/linux/rt_linux.o\
+	os/linux/rt_main_dev.o
 else
-	cp -f os/linux/Makefile.6.netif $(RT28xx_DIR)/os/linux/Makefile
-	$(MAKE) -C $(LINUX_SRC) SUBDIRS=$(RT28xx_DIR)/os/linux modules
+$(MOD_NAME)-objs += \
+	os/linux/rt_symb.o
+endif
+
+#ifdef ETH_CONVERT
+ifeq ($(HAS_ETH_CONVERT_SUPPORT), y)
+$(MOD_NAME)-objs += \
+	common/cmm_mat.o \
+	common/cmm_mat_iparp.o \
+	common/cmm_mat_pppoe.o \
+	common/cmm_mat_ipv6.o
+endif
+#endif // ETH_CONVERT //
+
+ifeq ($(HAS_QOS_DLS_SUPPORT),y)
+$(MOD_NAME)-objs += sta/dls.o
+endif
+
+#ifdef WFD_SUPPORT
+ifeq ($(HAS_WFD_SUPPORT),y)
+$(MOD_NAME)-objs += \
+	common/wfd.o
+endif
+#endif // WFD_SUPPORT //
+
+#ifdef LED_CONTROL_SUPPORT
+ifeq ($(HAS_LED_CONTROL_SUPPORT),y)
+$(MOD_NAME)-objs += \
+	common/rt_led.o
+endif
+#endif // LED_CONTROL_SUPPORT //
+
+ifeq ($(HAS_ATE),y)
+$(MOD_NAME)-objs += ate/common/rt_ate.o
+endif
+
+ifeq ($(HAS_QA_SUPPORT),y)
+$(MOD_NAME)-objs += ate/common/rt_qa.o
+endif
+
+#ifdef CRDA_SUPPORT
+ifeq ($(OSABL),NO)
+ifeq ($(HAS_CFG80211_SUPPORT),y)
+$(MOD_NAME)-objs += \
+	os/linux/cfg80211.o \
+	os/linux/cfg80211drv.o
 endif
 endif
 
-osdrv:
-ifneq (,$(findstring 2.4,$(LINUX_SRC)))
-	cp -f os/linux/Makefile.4 $(RT28xx_DIR)/os/linux/Makefile
-	$(MAKE) -C $(RT28xx_DIR)/os/linux/
-else
-	cp -f os/linux/Makefile.6 $(RT28xx_DIR)/os/linux/Makefile
-	$(MAKE) -C $(LINUX_SRC) SUBDIRS=$(RT28xx_DIR)/os/linux modules
+ifeq ($(OSABL),YES)
+ifeq ($(HAS_CFG80211_SUPPORT),y)
+$(MOD_NAME)-objs += \
+	os/linux/cfg80211drv.o
+endif
+endif
+#endif // CRDA_SUPPORT //
+
+endif
+#endif // CONFIG_STA_SUPPORT //
+
+#chip releated
+
+#ifdef MT76x0
+ifneq ($(findstring 7610U,$(CHIPSET)),)
+$(MOD_NAME)-objs += \
+                common/cmm_mac_usb.o\
+                common/cmm_data_usb.o\
+				common/rtusb_io.o\
+				common/rtusb_data.o\
+				common/rtusb_bulk.o\
+                os/linux/rt_usb.o\
+                common/ee_prom.o\
+				common/ee_efuse.o\
+                common/rt_rf.o\
+				chips/rt65xx.o\
+                chips/mt76x0.o\
+                mac/ral_nmac.o\
+				mcu/mcu.o\
+                mcu/mcu_and.o
+
+ifeq ($(HAS_RTMP_FLASH_SUPPORT),y)
+$(MOD_NAME)-objs += \
+        		common/ee_flash.o
 endif
 
-# Declare the contents of the .PHONY variable as phony.  We keep that information in a variable
-.PHONY: $(PHONY)
+ifeq ($(HAS_TSO_SUPPORT),y)
+$(MOD_NAME)-objs += \
+				naf/net_acc.o\
+				naf/cso.o
+endif
+
+ifeq ($(HAS_CSO_SUPPORT), y)
+$(MOD_NAME)-objs += \
+				naf/net_acc.o\
+				naf/cso.o
+endif
+
+ifeq ($(HAS_ATE),y)
+$(MOD_NAME)-objs += \
+	ate/chips/mt76x0_ate.o\
+	ate/common/ate_usb.o
+endif
+
+ifeq ($(OSABL),NO)
+$(MOD_NAME)-objs += \
+                os/linux/rt_usb.o\
+                os/linux/rt_usb_util.o\
+                os/linux/usb_main_dev.o\
+				common/rtusb_dev_id.o
+endif
+
+ifneq ($(findstring $(RT28xx_MODE),STA APSTA),)
+$(MOD_NAME)-objs += \
+        common/frq_cal.o
+endif
+
+endif
+#endif // MT76x0 //
 
 
 
+
+
+
+
+
+
+
+
+
+obj-m := $(MOD_NAME).o
