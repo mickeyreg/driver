@@ -2458,10 +2458,10 @@ static int stv090x_set_viterbi(struct stv090x_state *state)
 	switch (state->search_mode)
 	{
 		case STV090x_SEARCH_AUTO:
-			if (STV090x_WRITE_DEMOD(state, FECM, 0x10) < 0) /* DVB-S and DVB-S2 */
-				goto err;
-			if (STV090x_WRITE_DEMOD(state, PRVIT, 0x3f) < 0) /* all puncture rate */
-				goto err;
+//			if (STV090x_WRITE_DEMOD(state, FECM, 0x10) < 0) /* DVB-S and DVB-S2 */
+//				goto err;
+//			if (STV090x_WRITE_DEMOD(state, PRVIT, 0x3f) < 0) /* all puncture rate */
+//				goto err;
 //#endif
 			if (STV090x_WRITE_DEMOD(state, FECM, 0x00) < 0) /* DVB-S and DVB-S2 */
 				goto err;

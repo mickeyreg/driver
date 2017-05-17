@@ -165,6 +165,11 @@ int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
 			(pSession->source <= DMX_SOURCE_FRONT3)) ||
 			((pSession->source == DMX_SOURCE_DVR0) && swts)))
 		return -1;
+#elif defined(DSI87)
+	if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
+			(pSession->source <= DMX_SOURCE_FRONT1)) ||
+			((pSession->source == DMX_SOURCE_DVR0) && swts)))
+		return -1;
 #else
 	if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
 			(pSession->source <= DMX_SOURCE_FRONT2)) ||
@@ -336,6 +341,11 @@ int stpti_stop_feed(struct dvb_demux_feed *dvbdmxfeed,
 			(pSession->source <= DMX_SOURCE_FRONT3)) ||
 			((pSession->source == DMX_SOURCE_DVR0) && swts)))
 		return -1;
+#elif defined(DSI87)
+	if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
+			(pSession->source <= DMX_SOURCE_FRONT1)) ||
+			((pSession->source == DMX_SOURCE_DVR0) && swts)))
+		return -1;
 #else
 	if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
 			(pSession->source <= DMX_SOURCE_FRONT2)) ||
@@ -503,7 +513,8 @@ static int convert_source(const dmx_source_t source)
 			break;
 #elif defined(ARIVALINK200) \
  || defined(IPBOX55) \
- || defined(HL101)
+ || defined(HL101) \
+ || defined(DSI87)
 		case DMX_SOURCE_DVR0:
 			tag = TSIN1; //fake tsin for DVR (DVBT-USB at swts0)
 			break;
@@ -771,10 +782,16 @@ int SetSource(struct dmx_demux *demux, const dmx_source_t *src)
 #endif
 #endif
 	pContext->pPtiSession->source = *src;
-#if defined(SAGEMCOM88) || defined(SPARK7162)
+
+#if defined(DSI87)
+	if (((*src >= DMX_SOURCE_FRONT0) && (*src <= DMX_SOURCE_FRONT1)) || (*src == DMX_SOURCE_DVR0))
+#elif defined(ADB5800) \
+ || defined(ADB2850)
+	if (((*src >= DMX_SOURCE_FRONT0) && (*src <= DMX_SOURCE_FRONT2)) || (*src == DMX_SOURCE_DVR0))
+#elif defined(SAGEMCOM88)
 	if (((*src >= DMX_SOURCE_FRONT0) && (*src <= DMX_SOURCE_FRONT3)) || (*src == DMX_SOURCE_DVR0))
 #else
-	if (((*src >= DMX_SOURCE_FRONT0) && (*src <= DMX_SOURCE_FRONT2)) || (*src == DMX_SOURCE_DVR0))
+	if (((*src >= DMX_SOURCE_FRONT0) && (*src <= DMX_SOURCE_FRONT3)) || (*src == DMX_SOURCE_DVR0))
 #endif
 	{
 		pti_hal_set_source(pContext->pPtiSession->session, convert_source(*src));

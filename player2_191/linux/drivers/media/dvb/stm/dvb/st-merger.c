@@ -1538,7 +1538,7 @@ else
  || defined(IPBOX9900) \
  || defined(IPBOX99) \
  || defined(IPBOX55) \
- || defined(HL101) \\
+ || defined(HL101) \
  || defined(ADB5800)
 		printk(">>Init DVBT-USB\n");
 		tsm_handle.tsm_io = ioremap(TSMergerBaseAddress, 0x0900);
