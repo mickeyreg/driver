@@ -9,12 +9,12 @@ CHIPSET                           = 7612U
 OSABL                             = NO
 
 HAS_ATE                           = y
-HAS_QA_SUPPORT                    = y
-HAS_LED_CONTROL_SUPPORT           = y
+HAS_QA_SUPPORT                    = n
+HAS_LED_CONTROL_SUPPORT           = n
 HAS_KTHREAD_SUPPORT               = y
 
 HAS_WPA_SUPPLICANT                = y
-HAS_NATIVE_WPA_SUPPLICANT_SUPPORT = y
+HAS_NATIVE_WPA_SUPPLICANT_SUPPORT = n
 HAS_DOT11N_DRAFT3_SUPPORT         = y
 HAS_DOT11_N_SUPPORT               = y
 HAS_DOT11_VHT_SUPPORT             = y
@@ -48,9 +48,23 @@ EXTRA_CFLAGS += -fomit-frame-pointer -ffreestanding -m4-nofpu
 WFLAGS := -DAGGREGATION_SUPPORT -DPIGGYBACK_SUPPORT -DWMM_SUPPORT  -DLINUX -Wall -Wstrict-prototypes -Wno-trigraphs -DENHANCED_STAT_DISPLAY -DCONFIG_RA_NAT_NONE
 WFLAGS += -DSYSTEM_LOG_SUPPORT  -DRT28xx_MODE=$(RT28xx_MODE) -DCHIPSET=$(CHIPSET) -DRESOURCE_PRE_ALLOC -DST -D__KERNEL__ -DDBG_DIAGNOSE -DDBG_RX_MCS -DDBG_TX_MCS
 
+# -> WFLAGS := -DAGGREGATION_SUPPORT -DPIGGYBACK_SUPPORT -DWMM_SUPPORT  -DLINUX -Wall -Wstrict-prototypes -Wno-trigraphs
+# -> WFLAGS += -DSYSTEM_LOG_SUPPORT  -DRT28xx_MODE=$(RT28xx_MODE) -DCHIPSET=$(CHIPSET) -DRESOURCE_PRE_ALLOC -DST -D__KERNEL__
+# WFLAGS := -g -DAGGREGATION_SUPPORT -DPIGGYBACK_SUPPORT -DWMM_SUPPORT  -DLINUX -Wall -Wstrict-prototypes -Wno-trigraphs -DENHANCED_STAT_DISPLAY
+# WFLAGS += -DSYSTEM_LOG_SUPPORT -DRT28xx_MODE=$(RT28xx_MODE) -DCHIPSET=$(MODULE) -DRESOURCE_PRE_ALLOC -DDBG_DIAGNOSE -DDBG_RX_MCS -DDBG_TX_MCS
+# WFLAGS += -DENHANCED_STAT_DISPLAY -DDBG_DIAGNOSE -DDBG_RX_MCS -DDBG_TX_MCS
+
+#################################################
+
+
 # WFLAGS := -g -DAGGREGATION_SUPPORT -DPIGGYBACK_SUPPORT -DWMM_SUPPORT  -DLINUX -Wall -Wstrict-prototypes -Wno-trigraphs -DENHANCED_STAT_DISPLAY
 # WFLAGS += -DSYSTEM_LOG_SUPPORT -DRT28xx_MODE=$(RT28xx_MODE) -DCHIPSET=$(CHIPSET) -DRESOURCE_PRE_ALLOC -DDBG_DIAGNOSE -DDBG_RX_MCS -DDBG_TX_MCS
-# WFLAGS += -DCONFIG_RA_NAT_NONE
+# WFLAGS += -DSYSTEM_LOG_SUPPORT -DRT28xx_MODE=$(RT28xx_MODE) -DCHIPSET=$(MODULE) -DRESOURCE_PRE_ALLOC -DDBG_DIAGNOSE -DDBG_RX_MCS -DDBG_TX_MCS
+#APsoc Specific
+#WFLAGS += -DCONFIG_RA_NAT_NONE
+#end of /* APsoc Specific */
+
+# WFLAGS += -I$(src)/include
 
 ifeq ($(HAS_MULTI_INF),y)
 WFLAGS += -DMULTI_INF_SUPPORT
@@ -103,11 +117,125 @@ ifeq ($(HAS_TEMPERATURE_TX_ALC),y)
 WFLAGS += -DRTMP_TEMPERATURE_TX_ALC
 endif
 
+###############################################################################
+#
+# config for AP mode
+#
+###############################################################################
+
+
+ifeq ($(RT28xx_MODE),AP)
+WFLAGS += -DCONFIG_AP_SUPPORT  -DUAPSD_SUPPORT -DMBSS_SUPPORT -DIAPP_SUPPORT -DDBG -DDOT1X_SUPPORT -DAP_SCAN_SUPPORT -DSCAN_SUPPORT
+
+ifeq ($(HAS_HOSTAPD_SUPPORT),y)
+WFLAGS += -DHOSTAPD_SUPPORT
+endif
+
+
+ifeq ($(HAS_RSSI_FEEDBACK),y)
+WFLAGS += -DRSSI_FEEDBACK
+endif
+
+ifeq ($(HAS_ED_MONITOR_SUPPORT),y)
+WFLAGS += -DED_MONITOR
+endif
+
+ifeq ($(HAS_MCAST_RATE_SPECIFIC_SUPPORT), y)
+WFLAGS += -DMCAST_RATE_SPECIFIC
+endif
+
+ifeq ($(HAS_SNMP_SUPPORT),y)
+WFLAGS += -DSNMP_SUPPORT
+endif
+
+ifeq ($(HAS_DOT11_N_SUPPORT),y)
+WFLAGS += -DDOT11_N_SUPPORT
+
+ifeq ($(HAS_DOT11N_DRAFT3_SUPPORT),y)
+WFLAGS += -DDOT11N_DRAFT3
+endif
+
+ifeq ($(HAS_TXBF_SUPPORT),y)
+WFLAGS += -DTXBF_SUPPORT
+endif
+
+ifeq ($(HAS_VHT_TXBF_SUPPORT),y)
+WFLAGS += -DVHT_TXBF_SUPPORT
+endif
+
+ifeq ($(HAS_NEW_RATE_ADAPT_SUPPORT),y)
+WFLAGS += -DNEW_RATE_ADAPT_SUPPORT
+endif
+
+ifeq ($(HAS_RATE_ADAPT_AGS_SUPPORT),y)
+WFLAGS += -DAGS_SUPPORT
+endif
+
+ifeq ($(HAS_GREENAP_SUPPORT),y)
+WFLAGS += -DGREENAP_SUPPORT
+endif
+
+endif
+
+
+ifeq ($(HAS_STATS_COUNT),y)
+WFLAGS += -DSTATS_COUNT_SUPPORT
+endif
+
+ifeq ($(HAS_TSSI_ANTENNA_VARIATION),y)
+WFLAGS += -DTSSI_ANTENNA_VARIATION
+endif
+
+ifeq ($(HAS_USB_BULK_BUF_ALIGMENT),y)
+WFLAGS += -DUSB_BULK_BUF_ALIGMENT
+endif
+
+ifeq ($(HAS_CFG80211_SUPPORT),y)
+WFLAGS += -DRT_CFG80211_SUPPORT -DEXT_BUILD_CHANNEL_LIST -DWPA_SUPPLICANT_SUPPORT
+ifeq ($(HAS_RFKILL_HW_SUPPORT),y)
+WFLAGS += -DRFKILL_HW_SUPPORT
+endif
+ifeq ($(HAS_CFG80211_SCAN_SIGNAL_AVG_SUPPORT),y)
+WFLAGS += -DCFG80211_SCAN_SIGNAL_AVG
+endif
+ifeq ($(HAS_CFG80211_P2P_SUPPORT),y)
+WFLAGS += -DRT_CFG80211_P2P_SUPPORT
+WFLAGS += -DCONFIG_AP_SUPPORT -DUAPSD_SUPPORT -DMBSS_SUPPORT -DAP_SCAN_SUPPORT
+WFLAGS += -DAPCLI_SUPPORT
+ifeq ($(HAS_CFG80211_P2P_SINGLE_DEVICE),y)
+WFLAGS += -DRT_CFG80211_P2P_SINGLE_DEVICE
+else
+ifeq ($(HAS_CFG80211_P2P_STATIC_CONCURRENT_DEVICE),y)
+WFLAGS += -DRT_CFG80211_P2P_STATIC_CONCURRENT_DEVICE
+else
+WFLAGS += -DRT_CFG80211_P2P_CONCURRENT_DEVICE
+ifeq ($(HAS_CFG80211_P2P_MULTI_CHAN_SUPPORT),y)
+WFLAGS += -DRT_CFG80211_P2P_MULTI_CHAN_SUPPORT
+endif
+endif
+endif
+endif
+ifeq ($(HAS_CFG80211_ANDROID_PRIV_LIB_SUPPORT),y)
+WFLAGS += -DRT_RT_CFG80211_ANDROID_PRIV_LIB_SUPPORT
+endif
+ifeq ($(HAS_CFG80211_TDLS_SUPPORT),y)
+WFLAGS += -DCFG_TDLS_SUPPORT -DUAPSD_SUPPORT
+endif
+endif
+
+ifeq ($(HAS_TXRX_SW_ANTDIV_SUPPORT),y)
+WFLAGS += -DTXRX_SW_ANTDIV_SUPPORT
+endif
+
+
+endif #// endif of RT2860_MODE == AP //
+
 ########################################################
 #
 # config for STA mode
 #
 ########################################################
+
 
 ifeq ($(RT28xx_MODE),STA)
 WFLAGS += -DCONFIG_STA_SUPPORT -DSCAN_SUPPORT -DDBG
@@ -115,6 +243,7 @@ WFLAGS += -DCONFIG_STA_SUPPORT -DSCAN_SUPPORT -DDBG
 ifeq ($(HAS_MT76XX_BT_COEXISTENCE_SUPPORT),y)
 WFLAGS += -DMT76XX_BTCOEX_SUPPORT
 endif
+
 ifeq ($(HAS_WPA_SUPPLICANT),y)
 WFLAGS += -DWPA_SUPPLICANT_SUPPORT
 ifeq ($(HAS_NATIVE_WPA_SUPPLICANT_SUPPORT),y)
@@ -158,6 +287,7 @@ endif
 ifeq ($(HAS_TSSI_ANTENNA_VARIATION),y)
 WFLAGS += -DTSSI_ANTENNA_VARIATION
 endif
+
 
 ifeq ($(HAS_IFUP_IN_PROBE_SUPPORT),y)
 WFLAGS += -DIFUP_IN_PROBE
@@ -241,6 +371,91 @@ endif
 endif
 # endif of ifeq ($(RT28xx_MODE),STA)
 
+###########################################################
+#
+# config for APSTA
+#
+###########################################################
+
+
+ifeq ($(RT28xx_MODE),APSTA)
+WFLAGS += -DCONFIG_AP_SUPPORT -DCONFIG_STA_SUPPORT -DCONFIG_APSTA_MIXED_SUPPORT -DUAPSD_SUPPORT -DMBSS_SUPPORT -DIAPP_SUPPORT -DDOT1X_SUPPORT -DAP_SCAN_SUPPORT -DSCAN_SUPPORT -DDBG
+
+ifeq ($(HAS_IGMP_SNOOP_SUPPORT),y)
+WFLAGS += -DIGMP_SNOOP_SUPPORT
+endif
+
+ifeq ($(HAS_CS_SUPPORT),y)
+WFLAGS += -DCARRIER_DETECTION_SUPPORT
+endif
+
+ifeq ($(HAS_MCAST_RATE_SPECIFIC_SUPPORT), y)
+WFLAGS += -DMCAST_RATE_SPECIFIC
+endif
+
+ifeq ($(HAS_QOS_DLS_SUPPORT),y)
+WFLAGS += -DQOS_DLS_SUPPORT
+endif
+
+ifeq ($(HAS_WPA_SUPPLICANT),y)
+WFLAGS += -DWPA_SUPPLICANT_SUPPORT
+ifeq ($(HAS_NATIVE_WPA_SUPPLICANT_SUPPORT),y)
+WFLAGS += -DNATIVE_WPA_SUPPLICANT_SUPPORT
+endif
+endif
+
+ifeq ($(HAS_DOT11_N_SUPPORT),y)
+WFLAGS += -DDOT11_N_SUPPORT
+endif
+
+ifeq ($(HAS_DOT11N_DRAFT3_SUPPORT),y)
+WFLAGS += -DDOT11N_DRAFT3
+endif
+
+ifeq ($(HAS_TXBF_SUPPORT),y)
+WFLAGS += -DTXBF_SUPPORT
+endif
+
+ifeq ($(HAS_VHT_TXBF_SUPPORT),y)
+WFLAGS += -DVHT_TXBF_SUPPORT
+endif
+
+ifeq ($(HAS_NEW_RATE_ADAPT_SUPPORT),y)
+WFLAGS += -DNEW_RATE_ADAPT_SUPPORT
+endif
+
+
+ifeq ($(HAS_CS_SUPPORT),y)
+WFLAGS += -DCARRIER_DETECTION_SUPPORT
+endif
+
+ifeq ($(HAS_STATS_COUNT),y)
+WFLAGS += -DSTATS_COUNT_SUPPORT
+endif
+
+ifeq ($(HAS_TSSI_ANTENNA_VARIATION),y)
+WFLAGS += -DTSSI_ANTENNA_VARIATION
+endif
+
+ifeq ($(HAS_CFG80211_SUPPORT),y)
+WFLAGS += -DRT_CFG80211_SUPPORT -DWPA_SUPPLICANT_SUPPORT
+ifeq ($(HAS_RFKILL_HW_SUPPORT),y)
+WFLAGS += -DRFKILL_HW_SUPPORT
+endif
+ifeq ($(HAS_CFG80211_SCAN_SIGNAL_AVG_SUPPORT),y)
+WFLAGS += -DCFG80211_SCAN_SIGNAL_AVG
+endif
+endif
+
+ifeq ($(HAS_P2P_SUPPORT),y)
+WFLAGS += -DP2P_SUPPORT
+WFLAGS += -DAPCLI_SUPPORT -DAP_SCAN_SUPPORT -DSCAN_SUPPORT -DP2P_APCLI_SUPPORT
+endif
+
+endif
+# endif of ifeq ($(RT28xx_MODE),APSTA)
+
+
 ##########################################################
 #
 # Common compiler flag
@@ -273,8 +488,50 @@ endif
 #
 #################################################
 
+#MT7620
+ifneq ($(findstring mt7620,$(CHIPSET)),)
+WFLAGS += -DRTMP_RBUS_SUPPORT -DRTMP_MAC_PCI -DRT6352 -DRTMP_RF_RW_SUPPORT -DRF_BANK -DRTMP_FLASH_SUPPORT -DCONFIG_SWMCU_SUPPORT -DSPECIFIC_BCN_BUF_SUPPORT -DVCORECAL_SUPPORT -DRESOURCE_PRE_ALLOC -DENHANCED_STAT_DISPLAY -DLOFT_IQ_CAL_SUPPORT -DRTMP_TEMPERATURE_CALIBRATION -DDYNAMIC_VGA_SUPPORT -DMCS_LUT_SUPPORT -DPEER_DELBA_TX_ADAPT -DENHANCE_ULTP
+endif
+## End of MT7620 ##
+
+# MT7650U
+ifneq ($(or $(findstring mt7650u,$(CHIPSET)),$(findstring mt7630u,$(CHIPSET)),$(findstring mt7610u,$(CHIPSET))),)
+HAS_RLT_BBP=y
+HAS_RLT_MAC=y
+HAS_RLT_RF=y
+
+WFLAGS += -DMT76x0 -DRT65xx -DRLT_MAC -DRLT_BBP -DRLT_RF -DRTMP_MAC_USB -DRTMP_USB_SUPPORT -DRTMP_TIMER_TASK_SUPPORT
+WFLAGS += -DA_BAND_SUPPORT -DRX_DMA_SCATTER -DRTMP_EFUSE_SUPPORT -DNEW_MBSSID_MODE -DCONFIG_ANDES_SUPPORT
+
+ifneq ($(findstring mt7650u,$(CHIPSET)),)
+WFLAGS += -DMT7650
+endif
+
+ifneq ($(findstring mt7630u,$(CHIPSET)),)
+WFLAGS += -DMT7630
+endif
+
+ifneq ($(findstring mt7610u,$(CHIPSET)),)
+WFLAGS += -DMT7610
+endif
+
+ifneq ($(findstring $(RT28xx_MODE),AP),)
+#WFLAGS += -DSPECIFIC_BCN_BUF_SUPPORT
+endif
+
+ifeq ($(HAS_CSO_SUPPORT), y)
+WFLAGS += -DCONFIG_CSO_SUPPORT
+ifeq ($(HAS_TSO_SUPPORT), y)
+WFLAGS += -DCONFIG_TSO_SUPPORT -DTX_PKT_SG
+endif
+endif
+
+endif
+## End of MT7650U ##
+
 # MT7662U
 ifneq ($(findstring 7612U,$(CHIPSET)),)
+# ---> ifneq ($(or $(findstring mt7662u,$(CHIPSET)),$(findstring mt7662u,$(CHIPSET))),)
 WFLAGS += -DMT76x2 -DRT65xx -DRLT_MAC -DRLT_BBP -DMT_RF -DRTMP_MAC_USB -DRTMP_USB_SUPPORT -DRTMP_TIMER_TASK_SUPPORT -DA_BAND_SUPPORT -DRTMP_EFUSE_SUPPORT -DNEW_MBSSID_MODE -DCONFIG_ANDES_SUPPORT -DRTMP_RF_RW_SUPPORT -DDYNAMIC_VGA_SUPPORT
 HAS_NEW_RATE_ADAPT_SUPPORT=y
 ifeq ($(HAS_NEW_RATE_ADAPT_SUPPORT),y)
@@ -284,7 +541,12 @@ WFLAGS += -DFIFO_EXT_SUPPORT
 HAS_RLT_BBP=y
 HAS_RLT_MAC=y
 
+ifneq ($(findstring mt7662u,$(CHIPSET)),)
+WFLAGS += -DMT7662
+endif
+
 ifneq ($(findstring 7612U,$(CHIPSET)),)
+# ---> ifneq ($(findstring mt7612u,$(CHIPSET)),)
 WFLAGS += -DMT7612
 endif
 
@@ -321,6 +583,7 @@ ifeq ($(HAS_LLTD),y)
 WFLAGS += -DLLTD_SUPPORT
 endif
 
+# EXTRA_CFLAGS := $(WFLAGS)
 EXTRA_CFLAGS += $(WFLAGS)
 
 #OS ABL - YES or NO
@@ -472,6 +735,49 @@ endif
 
 ###############################################################################
 #
+# config for AP mode
+#
+###############################################################################
+
+obj_ap += \
+	ap/ap_mbss.o\
+	ap/ap.o\
+	ap/ap_assoc.o\
+	ap/ap_auth.o\
+	ap/ap_connect.o\
+	ap/ap_mlme.o\
+	ap/ap_sanity.o\
+	ap/ap_sync.o\
+	ap/ap_wpa.o\
+	ap/ap_data.o\
+	ap/ap_autoChSel.o\
+	ap/ap_qload.o\
+	ap/ap_cfg.o
+
+ifeq ($(HAS_QOS_DLS_SUPPORT),y)
+obj_ap += ap/ap_dls.o
+endif
+
+ifeq ($(HAS_IDS_SUPPORT),y)
+obj_ap += ap/ap_ids.o
+endif
+
+ifeq ($(HAS_WSC),y)
+obj_ap += common/wsc_ufd.o
+endif
+
+obj_ap += \
+	ap/ap_mbss_inf.o\
+	os/linux/ap_ioctl.o
+
+ifeq ($(HAS_IGMP_SNOOP_SUPPORT),y)
+obj_ap += common/igmp_snoop.o
+endif
+
+MOD_NAME = mt$(CHIPSET)sta
+
+###############################################################################
+#
 # config for STA mode
 #
 ###############################################################################
@@ -493,6 +799,15 @@ obj_sta += os/linux/sta_ioctl.o
 
 MOD_NAME = mt$(CHIPSET)sta
 
+
+###############################################################################
+#
+# config for AP/STA mixed mode
+#
+###############################################################################
+
+MOD_NAME = mt$(CHIPSET)sta
+
 ###############################################################################
 #
 # Module Base
@@ -500,6 +815,61 @@ MOD_NAME = mt$(CHIPSET)sta
 ###############################################################################
 
 obj-m := $(MOD_NAME).o
+
+#ifdef CONFIG_AP_SUPPORT
+ifeq ($(RT28xx_MODE),AP)
+
+$(MOD_NAME)-objs := \
+	$(obj_ap)\
+	$(obj_vht)\
+	$(obj_cmm)\
+	$(obj_wsc)\
+	$(obj_phy)
+
+ifeq ($(HAS_ATE),y)
+$(MOD_NAME)-objs += ate/common/rt_ate.o
+endif
+
+ifeq ($(HAS_QA_SUPPORT),y)
+$(MOD_NAME)-objs += ate/common/rt_qa.o
+endif
+
+#ifdef MULTI_INF_SUPPORT
+ifeq ($(HAS_MULTI_INF),y)
+$(MOD_NAME)-objs += os/linux/multi_main_dev.o
+endif
+#endif // MULTI_INF_SUPPORT //
+
+#ifdef BG_FT_SUPPORT
+ifeq ($(HAS_BGFP_SUPPORT),y)
+$(MOD_NAME)-objs += \
+	os/linux/br_ftph.o
+endif
+#endif // BG_FT_SUPPORT //
+
+$(MOD_NAME)-objs += \
+	common/rt_os_util.o\
+	os/linux/rt_linux.o\
+	os/linux/rt_main_dev.o
+
+ifeq ($(HAS_SNIFFER_SUPPORT),y)
+$(MOD_NAME)-objs += \
+	sniffer/sniffer_prism.o	\
+	sniffer/sniffer_radiotap.o
+endif
+
+#endif // CRDA_SUPPORT //
+
+ifeq ($(HAS_RT2880_RT2860_COEXIST),y)
+RT28XX_AP_OBJ += \
+	os/linux/rt_pci_rbus.o\
+	os/linux/rt_rbus_pci_util.o\
+	os/linux/pci_main_dev.o\
+	common/dfs.o
+endif
+
+endif
+#endif // CONFIG_AP_SUPPORT //
 
 #ifdef CONFIG_STA_SUPPORT
 ifeq ($(RT28xx_MODE), STA)
@@ -534,9 +904,14 @@ $(MOD_NAME)-objs += \
 endif
 #endif // ETH_CONVERT //
 
+
+
+
 ifeq ($(HAS_QOS_DLS_SUPPORT),y)
 $(MOD_NAME)-objs += sta/dls.o
 endif
+
+
 
 ifeq ($(HAS_ATE),y)
 $(MOD_NAME)-objs += ate/common/rt_ate.o
@@ -564,7 +939,62 @@ $(MOD_NAME)-objs += \
 	os/linux/cfg80211/cfg80211drv.o
 endif
 
+#ifdef CONFIG_APSTA_SUPPORT
+ifeq ($(RT28xx_MODE), APSTA)
+$(MOD_NAME)-objs := \
+	$(obj_ap)\
+	$(obj_sta)\
+	$(obj_p2p)\
+	$(obj_vht)\
+	$(obj_cmm)\
+	$(obj_wsc)\
+	$(obj_phy)
+
+$(MOD_NAME)-objs += \
+	common/rt_os_util.o\
+	os/linux/sta_ioctl.o\
+	os/linux/rt_linux.o\
+	os/linux/rt_main_dev.o
+
+ifeq ($(HAS_SNIFFER_SUPPORT),y)
+$(MOD_NAME)-objs += \
+	sniffer/sniffer_prism.o\
+	sniffer/sniffer_radiotap.o
+endif
+
+#ifdef ETH_CONVERT
+ifeq ($(HAS_ETH_CONVERT_SUPPORT), y)
+$(MOD_NAME)-objs += \
+	common/cmm_mat.o \
+	common/cmm_mat_iparp.o \
+	common/cmm_mat_pppoe.o \
+	common/cmm_mat_ipv6.o
+endif
+#endif // ETH_CONVERT //
+
+
+
+
+ifeq ($(HAS_QOS_DLS_SUPPORT),y)
+$(MOD_NAME)-objs += sta/dls.o
+endif
+
+
+
+ifeq ($(HAS_ATE),y)
+$(MOD_NAME)-objs += ate/common/rt_ate.o
+endif
+
+ifeq ($(HAS_QA_SUPPORT),y)
+$(MOD_NAME)-objs += ate/common/rt_qa.o
+endif
+
+endif
+#endif // CONFIG_APSTA_SUPPORT //
+
+
 #chip releated
+
 
 #ifdef MT76x2
 ifneq ($(or $(findstring mt7662e,$(CHIPSET)),$(findstring mt7612e,$(CHIPSET))),)
@@ -605,7 +1035,7 @@ endif
 
 endif
 
-ifneq ($(findstring 7612U,$(CHIPSET)),)
+ifneq ($(or $(findstring mt7662u,$(CHIPSET)),$(findstring mt7612u,$(CHIPSET))),)
 $(MOD_NAME)-objs += \
 	common/cmm_mac_usb.o\
 	common/cmm_data_usb.o\
@@ -659,4 +1089,56 @@ endif
 
 endif
 #endif // MT76x2 //
+
+# Declare the contents of the .PHONY variable as phony.  We keep that
+# information in a variable so we can use it in if_changed and friends.
+.PHONY: $(PHONY)
+
+
+
+MAKE = make
+
+ifeq ($(PLATFORM),PC)
+# Linux 2.6
+KSRC = /lib/modules/$(shell uname -r)/build
+CROSS_COMPILE =
+EXTRA_CFLAGS += -DCONFIG_LITTLE_ENDIAN
+SUBARCH := $(shell uname -m | sed -e s/i.86/i386/)
+ARCH ?= $(SUBARCH)
+endif
+
+export OSABL RT28xx_DIR RT28xx_MODE KSRC CROSS_COMPILE CROSS_COMPILE_INCLUDE PLATFORM RELEASE CHIPSET MODULE  KSRC HAS_WOW_SUPPORT
+
+all: build_tools modules
+
+build_tools:
+	$(MAKE) -C tools
+	$(RT28xx_DIR)/tools/bin2h
+
+test:
+	$(MAKE) -C tools test
+
+modules:
+	$(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KSRC) M=$(PWD) modules
+
+clean:
+	rm -f */*.o
+	rm -f */.*.{cmd,flags,d}
+	rm -f *.{o,ko,mod.{o,c}}
+	rm -f */*/*.{o,ko,mod.{o,c}}
+	rm -f */*/.*.{cmd,flags,d}
+	rm -f */*/*/*.{o,ko,mod.{o,c}}
+	rm -f */*/*/.*.{cmd,flags,d}
+	rm -fr .tmp_versions
+#Must clean Module.symvers; or you will suffer symbol version not match
+#when OS_ABL = YES.
+	rm -f Module.symvers
+	rm -f Modules.symvers
+	rm -f Module.markers
+	rm -f modules.order
+
+# Declare the contents of the .PHONY variable as phony.  We keep that information in a variable
+.PHONY: $(PHONY)
+
+
 

@@ -1,5 +1,3 @@
-include $(RT28xx_DIR)/os/linux/config.mk
-
 obj_ap :=
 obj_sta :=
 obj_p2p :=
@@ -49,7 +47,7 @@ obj_cmm := \
 
 obj_phy := ../../phy/phy.o	\
 		   ../../phy/rf.o
-	
+
 obj_mac := ../../mac/rtmp_mac.o
 
 ifeq ($(HAS_RTMP_BBP),y)
@@ -151,8 +149,6 @@ endif
 #
 ###############################################################################
 
-#ifdef CONFIG_AP_SUPPORT
-ifeq ($(RT28xx_MODE),AP)
 obj_ap += \
 	../../ap/ap_mbss.o\
 	../../ap/ap.o\
@@ -180,46 +176,9 @@ ifeq ($(HAS_WSC),y)
 obj_ap += ../../common/wsc_ufd.o
 endif
 
-
-
-ifeq ($(HAS_WDS),y)
-obj_ap += ../../ap/ap_wds.o
-
-ifeq ($(OSABL),NO)
-obj_ap += ../../ap/ap_wds_inf.o
-endif
-endif
-
-ifeq ($(OSABL),NO)
 obj_ap += \
     ../../ap/ap_mbss_inf.o\
 	../../os/linux/ap_ioctl.o
-endif
-
-#ifdef APCLI_SUPPORT
-ifeq ($(HAS_APCLI),y)
-obj_ap += \
-	../../ap/ap_apcli.o \
-	../../ap/apcli_ctrl.o \
-	../../ap/apcli_sync.o \
-	../../ap/apcli_auth.o \
-	../../ap/apcli_assoc.o \
-	../../common/cmm_mat.o \
-	../../common/cmm_mat_iparp.o \
-	../../common/cmm_mat_pppoe.o \
-	../../common/cmm_mat_ipv6.o
-
-ifeq ($(OSABL),NO)
-obj_ap += ../../ap/ap_apcli_inf.o
-endif
-endif
-#endif // APCLI_SUPPORT //
-
-
-ifeq ($(HAS_CLIENT_WDS_SUPPORT),y)
-$(MOD_NAME)-objs += \
-	../../common/client_wds.o
-endif
 
 ifeq ($(HAS_IGMP_SNOOP_SUPPORT),y)
 obj_ap += ../../common/igmp_snoop.o
@@ -228,8 +187,6 @@ endif
 MOD_NAME = $(MODULE)_ap
 DAT_PATH = /etc/Wireless/RT$(CHIPSET_DAT)AP
 DAT_FILE_NAME = conf/RT$(CHIPSET_DAT)AP.dat
-endif
-#endif // CONFIG_AP_SUPPORT //
 
 
 ###############################################################################
@@ -238,8 +195,6 @@ endif
 #
 ###############################################################################
 
-#ifdef CONFIG_STA_SUPPORT
-ifeq ($(RT28xx_MODE), STA)
 obj_sta += \
 	../../sta/assoc.o\
 	../../sta/auth.o\
@@ -253,32 +208,11 @@ obj_sta += \
 	../../sta/sta.o
 
 
-ifeq ($(OSABL),NO)
 obj_sta += ../../os/linux/sta_ioctl.o
-endif
-
-ifeq ($(HAS_CFG80211_SUPPORT),y)
-ifeq ($(HAS_CFG80211_P2P_SUPPORT),y)
-ifeq ($(HAS_CFG80211_P2P_CONCURRENT_DEVICE),y)
-obj_sta += \
-        ../../ap/ap_apcli.o \
-        ../../ap/apcli_ctrl.o \
-        ../../ap/apcli_sync.o \
-        ../../ap/apcli_auth.o \
-        ../../ap/apcli_assoc.o 
-
-ifeq ($(OSABL),NO)
-obj_sta += ../../ap/ap_apcli_inf.o
-endif
-endif
-endif
-endif
 
 MOD_NAME = $(MODULE)_sta
 DAT_PATH = /etc/Wireless/RT$(CHIPSET_DAT)STA
 DAT_FILE_NAME = conf/RT$(CHIPSET_DAT)STA.dat
-endif
-#endif // CONFIG_STA_SUPPORT //
 
 
 ###############################################################################
@@ -327,15 +261,12 @@ endif
 #endif // MULTI_INF_SUPPORT //
 
 #ifdef BG_FT_SUPPORT
-ifeq ($(OSABL),NO)
 ifeq ($(HAS_BGFP_SUPPORT),y)
 $(MOD_NAME)-objs += \
 	../../os/linux/br_ftph.o
 endif
-endif
 #endif // BG_FT_SUPPORT //
 
-ifeq ($(OSABL),NO)
 $(MOD_NAME)-objs += \
 	../../common/rt_os_util.o\
 	../../os/linux/rt_linux.o\
@@ -347,74 +278,14 @@ $(MOD_NAME)-objs += \
 	../../sniffer/sniffer_radiotap.o
 endif
 
-else
-$(MOD_NAME)-objs += \
-	../../os/linux/rt_symb.o
-endif
-
-#ifdef CRDA_SUPPORT
-ifeq ($(OSABL),NO)
-ifeq ($(HAS_CFG80211_SUPPORT),y)
-$(MOD_NAME)-objs += \
-	../../os/linux/cfg80211/cfg80211.o\
-	../../os/linux/cfg80211/cfg80211_util.o\
-	../../os/linux/cfg80211/cfg80211_scan.o\
-	../../os/linux/cfg80211/cfg80211_rx.o\
-	../../os/linux/cfg80211/cfg80211_tx.o\
-	../../os/linux/cfg80211/cfg80211_inf.o\
-	../../os/linux/cfg80211/cfg80211_p2p.o\
-	../../os/linux/cfg80211/cfg80211_ap.o\
-	../../os/linux/cfg80211/cfg80211drv.o
-endif
-endif
-
-ifeq ($(OSABL),YES)
-ifeq ($(HAS_CFG80211_SUPPORT),y)
-$(MOD_NAME)-objs += \
-	../../os/linux/cfg80211/cfg80211_scan.o\
-	../../os/linux/cfg80211/cfg80211_rx.o\
-        ../../os/linux/cfg80211/cfg80211_tx.o\
-        ../../os/linux/cfg80211/cfg80211_inf.o\
-	../../os/linux/cfg80211/cfg80211_p2p.o\
-	../../os/linux/cfg80211/cfg80211_ap.o\
-	../../os/linux/cfg80211/cfg80211drv.o
-endif
-endif
 #endif // CRDA_SUPPORT //
 
-ifeq ($(HAS_RT2880_RT2860_COEXIST),y)	
+ifeq ($(HAS_RT2880_RT2860_COEXIST),y)
 RT28XX_AP_OBJ += \
 	../../os/linux/rt_pci_rbus.o\
 	../../os/linux/rt_rbus_pci_util.o\
 	../../os/linux/pci_main_dev.o\
 	../../common/dfs.o
-endif
-
-
-ifeq ($(PLATFORM),IKANOS_V160)
-$(MOD_NAME)-objs += ../../os/linux/vr_ikans.o
-endif
-
-ifeq ($(PLATFORM),IKANOS_V180)
-$(MOD_NAME)-objs += ../../os/linux/vr_ikans.o
-endif
-
-ifeq ($(PLATFORM),BL2348)
-ifeq ($(OSABL),NO)
-$(MOD_NAME)-objs += ../../os/linux/vr_bdlt.o
-endif
-endif
-#ifdef PLATFORM_BL23570
-ifeq ($(PLATFORM),BL23570)
-rt$(CHIPSET)ap-objs += \
-        ../../os/linux/vr_bdlt.o
-endif
-#endif // PLATFORM_BL23570 //
-
-ifeq ($(HAS_EASY_CONFIG_SETUP_SUPPORT),y)
-ifeq ($(PLATFORM),RALINK_3052)
-$(MOD_NAME)-objs += lib.a
-endif
 endif
 
 endif
@@ -431,7 +302,6 @@ $(MOD_NAME)-objs := \
 	$(obj_wsc)\
 	$(obj_phy)
 
-ifeq ($(OSABL),NO)
 $(MOD_NAME)-objs += \
 	../../common/rt_os_util.o\
 	../../os/linux/sta_ioctl.o\
@@ -442,11 +312,6 @@ ifeq ($(HAS_SNIFFER_SUPPORT),y)
 $(MOD_NAME)-objs += \
 	../../sniffer/sniffer_prism.o\
 	../../sniffer/sniffer_radiotap.o
-endif
-
-else
-$(MOD_NAME)-objs += \
-	../../os/linux/rt_symb.o
 endif
 
 #ifdef ETH_CONVERT
@@ -476,64 +341,23 @@ ifeq ($(HAS_QA_SUPPORT),y)
 $(MOD_NAME)-objs += ../../ate/common/rt_qa.o
 endif
 
-
+endif
+#endif // CONFIG_STA_SUPPORT //
 
 
 #ifdef CRDA_SUPPORT
-ifeq ($(OSABL),NO)
 ifeq ($(HAS_CFG80211_SUPPORT),y)
 $(MOD_NAME)-objs += \
-	../../os/linux/cfg80211/cfg80211.o \
+	../../os/linux/cfg80211/cfg80211.o\
 	../../os/linux/cfg80211/cfg80211_util.o\
 	../../os/linux/cfg80211/cfg80211_scan.o\
 	../../os/linux/cfg80211/cfg80211_rx.o\
-        ../../os/linux/cfg80211/cfg80211_tx.o\
-        ../../os/linux/cfg80211/cfg80211_inf.o\
-	../../os/linux/cfg80211/cfg80211_p2p.o\
-	../../os/linux/cfg80211/cfg80211_ap.o\
-	../../os/linux/cfg80211/cfg80211drv.o
-ifeq ($(HAS_CFG80211_TDLS_SUPPORT),y)
-$(MOD_NAME)-objs += \
-        ../../os/linux/cfg80211/cfg80211_tdls.o
-endif
-ifeq ($(HAS_CFG80211_P2P_SUPPORT),y)
-$(MOD_NAME)-objs += \
-	../../ap/ap_mbss.o\
-	../../ap/ap.o\
-	../../ap/ap_assoc.o\
-	../../ap/ap_auth.o\
-	../../ap/ap_connect.o\
-	../../ap/ap_mlme.o\
-	../../ap/ap_sanity.o\
-	../../ap/ap_sync.o\
-	../../ap/ap_wpa.o\
-	../../ap/ap_data.o\
-	../../ap/ap_autoChSel.o\
-	../../ap/ap_qload.o\
-	../../ap/ap_cfg.o\
-	../../os/linux/ap_ioctl.o		
-endif
-endif
-endif
-
-ifeq ($(OSABL),YES)
-ifeq ($(HAS_CFG80211_SUPPORT),y)
-$(MOD_NAME)-objs += \
-	../../os/linux/cfg80211/cfg80211_scan.o\
-	../../os/linux/cfg80211/cfg80211_rx.o\
-        ../../os/linux/cfg80211/cfg80211_tx.o\
-        ../../os/linux/cfg80211/cfg80211_inf.o\
+	../../os/linux/cfg80211/cfg80211_tx.o\
+	../../os/linux/cfg80211/cfg80211_inf.o\
 	../../os/linux/cfg80211/cfg80211_p2p.o\
 	../../os/linux/cfg80211/cfg80211_ap.o\
 	../../os/linux/cfg80211/cfg80211drv.o
 endif
-endif
-#endif // CRDA_SUPPORT //
-
-
-
-endif
-#endif // CONFIG_STA_SUPPORT //
 
 #ifdef CONFIG_APSTA_SUPPORT
 ifeq ($(RT28xx_MODE), APSTA)
@@ -548,54 +372,6 @@ endif
 
 
 #chip releated
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#ifdef RT6592
-ifneq ($(findstring rt6592,$(CHIPSET)),)
-$(MOD_NAME)-objs += \
-        ../../common/cmm_mac_pci.o\
-        ../../common/cmm_data_pci.o\
-        ../../os/linux/rt_rbus_pci_drv.o\
-        ../../mcu/mcu.o\
-		../../mcu/rtmp_M51.o\
-        ../../common/ee_prom.o\
-        ../../common/ee_efuse.o\
-        ../../common/rt_rf.o\
-        ../../chips/rt6592.o
-
-ifeq ($(OSABL),NO)
-$(MOD_NAME)-objs += \
-        ../../os/linux/rt_pci_rbus.o\
-        ../../os/linux/rt_rbus_pci_util.o\
-        ../../os/linux/pci_main_dev.o
-endif
-endif
-#endif // RT6592 //
-
-
-
-
-
 
 
 #ifdef MT76x2
@@ -625,12 +401,10 @@ $(MOD_NAME)-objs += \
         ../../ate/common/ate_pci.o
 endif
 
-ifeq ($(OSABL),NO)
 $(MOD_NAME)-objs += \
                 ../../os/linux/rt_pci_rbus.o\
                 ../../os/linux/rt_rbus_pci_util.o\
                 ../../os/linux/pci_main_dev.o
-endif
 
 ifneq ($(findstring $(RT28xx_MODE),STA APSTA),)
 $(MOD_NAME)-objs += \
@@ -680,13 +454,11 @@ $(MOD_NAME)-objs += \
 				../../naf/cso.o
 endif
 
-ifeq ($(OSABL),NO)
 $(MOD_NAME)-objs += \
                 ../../os/linux/rt_usb.o\
                 ../../os/linux/rt_usb_util.o\
                 ../../os/linux/usb_main_dev.o\
 				../../common/rtusb_dev_id.o
-endif
 
 ifneq ($(findstring $(RT28xx_MODE),STA APSTA),)
 $(MOD_NAME)-objs += \
@@ -695,99 +467,6 @@ endif
 
 endif
 #endif // MT76x2 //
-
-#ifdef RT8592
-ifneq ($(findstring rt8592,$(CHIPSET)),)
-$(MOD_NAME)-objs += \
-                ../../common/cmm_mac_pci.o\
-                ../../common/cmm_data_pci.o\
-                ../../os/linux/rt_rbus_pci_drv.o\
-                ../../common/ee_prom.o\
-                ../../common/rtmp_mcu.o\
-                ../../common/rt_rf.o\
-		../../chips/rt65xx.o\
-                ../../chips/rt85592.o\
-                ../../mac/ral_nmac.o\
-				../../mcu/mcu.o\
-                ../../mcu/mcu_and.o
-
-ifeq ($(HAS_RTMP_FLASH_SUPPORT),y)
-$(MOD_NAME)-objs += \
-        ../../common/ee_flash.o
-endif
-
-ifeq ($(HAS_ATE),y)
-$(MOD_NAME)-objs += \
-			../../ate/common/ate_pci.o\
-			../../ate/chips/rt85592_ate.o
-endif
-
-ifeq ($(OSABL),NO)
-$(MOD_NAME)-objs += \
-                ../../os/linux/rt_pci_rbus.o\
-                ../../os/linux/rt_rbus_pci_util.o\
-                ../../os/linux/pci_main_dev.o
-endif
-
-ifneq ($(findstring $(RT28xx_MODE),STA APSTA),)
-$(MOD_NAME)-objs += \
-        ../../common/frq_cal.o
-endif
-
-endif
-#endif // RT8592 //
-
-
-
-
-
-
-PHONY := clean install uninstall
-
-clean:
-	rm -f ../../common/*.o
-	rm -f ../../common/.*.{cmd,flags,d}
-	rm -f ../../os/linux/*.{o,ko,mod.{o,c}}
-	rm -f ../../os/linux/.*.{cmd,flags,d}
-	rm -fr ../../os/linux/.tmp_versions
-#Must clean Module.symvers; or you will suffer symbol version not match
-#when OS_ABL = YES.
-	rm -f ../../os/linux/Module.symvers
-	rm -f ../../os/linux/Modules.symvers
-	rm -f ../../os/linux/Module.markers
-	rm -f ../../os/linux/modules.order
-	rm -f ../../chips/*.o
-	rm -f ../../chips/.*.{cmd,flags,d}
-ifeq ($(RT28xx_MODE),AP)
-	rm -f ../../ap/*.o
-	rm -f ../../ap/.*.{cmd,flags,d}
-else
-ifeq ($(RT28xx_MODE),STA)
-	rm -f ../../sta/*.o
-	rm -f ../../sta/.*.{cmd,flags,d}
-else
-ifeq ($(RT28xx_MODE),APSTA)
-	rm -f ../../ap/*.o
-	rm -f ../../ap/.*.{cmd,flags,d}
-	rm -f ../../sta/*.o
-	rm -f ../../sta/.*.{cmd,flags,d}
-endif
-endif
-endif
-
-install:
-	rm -rf $(DAT_PATH)
-	$(shell [ ! -f /etc/Wireless ] && mkdir /etc/Wireless)
-	mkdir $(DAT_PATH)
-	cp $(RT28xx_DIR)/$(DAT_FILE_NAME) $(DAT_PATH)/.
-	install -d $(LINUX_SRC_MODULE)
-	install -m 644 -c $(addsuffix .ko,$(MOD_NAME)) $(LINUX_SRC_MODULE)
-	/sbin/depmod -a ${shell uname -r}
-
-uninstall:
-#	rm -rf $(DAT_PATH)
-	rm -rf $(addprefix $(LINUX_SRC_MODULE),$(addsuffix .ko,$(MOD_NAME)))
-	/sbin/depmod -a ${shell uname -r}
 
 # Declare the contents of the .PHONY variable as phony.  We keep that
 # information in a variable so we can use it in if_changed and friends.
