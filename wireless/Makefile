@@ -9,3 +9,6 @@ obj-y += rtl8192cu/
 obj-y += rtl8192du/
 obj-y += rtl8192eu/
 obj-y += rtl871x/
+
+# wired usb
+obj-y += dm9601/
